@@ -51,8 +51,7 @@ public class WalkingDead {
 	
 	@PreInit
 	public void preLoad(FMLPreInitializationEvent event) {
-		String comments = " WalkingDead Mod Config\n Michael Sheppard (crackedEgg)\n"
-						+ " Set xxxSpawnProb to zero to disable spawn of that entity\n";
+		String comments = " WalkingDead Mod Config\n Michael Sheppard (crackedEgg)\n";
 		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();

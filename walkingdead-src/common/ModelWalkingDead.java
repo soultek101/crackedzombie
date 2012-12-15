@@ -1,8 +1,9 @@
 package walkingdead.common;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.ModelBiped;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
+
 
 public class ModelWalkingDead extends ModelBiped {
 	public ModelWalkingDead() {

@@ -1,13 +1,11 @@
 package walkingdead.common;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityZombie;
-import net.minecraft.src.ModelBase;
-import net.minecraft.src.ModelBiped;
-import net.minecraft.src.ModelZombie;
-import net.minecraft.src.ModelZombieVillager;
-import net.minecraft.src.RenderBiped;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelZombieVillager;
+import net.minecraft.client.renderer.entity.RenderBiped;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+
 
 public class RenderWalkingDead extends RenderBiped {
 

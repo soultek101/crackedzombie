@@ -2,15 +2,7 @@ package walkingdead.common;
 
 import java.util.EnumSet;
 
-import net.minecraft.src.Chunk;
-import net.minecraft.src.ChunkCoordinates;
-import net.minecraft.src.ChunkPosition;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.SpawnListEntry;
-import net.minecraft.src.SpawnerAnimals;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldServer;
+import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;

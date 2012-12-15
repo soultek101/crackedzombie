@@ -1,35 +1,35 @@
 package walkingdead.common;
 
+import javax.swing.text.html.parser.Entity;
+
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityAIAttackOnCollide;
-import net.minecraft.src.EntityAIBreakDoor;
-import net.minecraft.src.EntityAIHurtByTarget;
-import net.minecraft.src.EntityAILeapAtTarget;
-import net.minecraft.src.EntityAILookIdle;
-import net.minecraft.src.EntityAIMoveThroughVillage;
-import net.minecraft.src.EntityAIMoveTwardsRestriction;
-import net.minecraft.src.EntityAINearestAttackableTarget;
-import net.minecraft.src.EntityAISwimming;
-import net.minecraft.src.EntityAIWander;
-import net.minecraft.src.EntityAIWatchClosest;
-import net.minecraft.src.EntityAgeable;
-import net.minecraft.src.EntityChicken;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityMob;
-import net.minecraft.src.EntityPig;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityVillager;
-import net.minecraft.src.EnumCreatureAttribute;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Potion;
-import net.minecraft.src.PotionEffect;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAIBreakDoor;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAILeapAtTarget;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.entity.ai.EntityAIMoveTwardsRestriction;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 
 public class EntityWalkingDead extends EntityMob {
 	

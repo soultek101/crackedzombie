@@ -76,18 +76,8 @@ public final class SpawnerWalkingDead {
             	continue;
             }
                 
-//                BiomeGenBase biome = worldServer.getBiomeGenForCoords(chunkPair.chunkXPos, chunkPair.chunkZPos);
-//                List list = biome.getSpawnableList(EnumCreatureType.monster);
-//                if (!list.isEmpty()) {
-//                	SpawnListEntry spawn = (SpawnListEntry)WeightedRandom.getRandomItem(worldServer.rand, list);
-//                    int numspawns = spawn.minGroupCount + worldServer.rand.nextInt(1 + spawn.maxGroupCount - spawn.minGroupCount);
-//                }
-
             if (!((Boolean)eligibleChunksForSpawning.get(chunkPair)).booleanValue()) {
                 ChunkPosition chunkPos = getRandomSpawningPointInChunk(worldServer, chunkPair.chunkXPos, chunkPair.chunkZPos);
-//                    int chunkX = chunkPos.x;
-//                    int chunkY = chunkPos.y;
-//                    int chunkZ = chunkPos.z;
 
                 boolean normalBlock = worldServer.isBlockNormalCube(chunkPos.x, chunkPos.y, chunkPos.z);
                 Material material = worldServer.getBlockMaterial(chunkPos.x, chunkPos.y, chunkPos.z);

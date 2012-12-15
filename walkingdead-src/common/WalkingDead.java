@@ -70,7 +70,7 @@ public class WalkingDead {
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id, 0x00AFAF, 0x799C45);
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
-		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 1, 6, EnumCreatureType.monster);
+		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 1, 8, EnumCreatureType.monster);
 	}
 	
 }

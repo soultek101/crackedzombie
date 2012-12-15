@@ -62,49 +62,54 @@ public final class SpawnerWalkingDead {
                 }
             }
         }
-
+        
         int eligibleChunks = 0;
         ChunkCoordinates spawnPoint = worldServer.getSpawnPoint();
-//        EnumCreatureType[] creatureTypeArray = EnumCreatureType.values();
-//        int nCreatureTypes = creatureTypeArray.length;
-
-//        for (int k = 0; k < nCreatureTypes; ++k) {
-//            EnumCreatureType creatureType = creatureTypeArray[k];
-//            if (creatureType != EnumCreatureType.monster) {
-//            	continue;
-//            }
         EnumCreatureType creatureType = EnumCreatureType.monster;
 
-        if (worldServer.countEntities(creatureType.getCreatureClass()) <= creatureType.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256) {
+//        if (worldServer.countEntities(creatureType.getCreatureClass()) <= creatureType.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256) {
             Iterator iter = eligibleChunksForSpawning.keySet().iterator();
             ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
             Collections.shuffle(tmp);
             iter = tmp.iterator();
             
-            label110:
+//            label110:
             	
             while (iter.hasNext()) { // iterate through the eligible chunks
                 ChunkCoordIntPair chunkPair = (ChunkCoordIntPair)iter.next();
+                int nCreaturesSpawnable = worldServer.countEntities(creatureType.getCreatureClass());
+                if (nCreaturesSpawnable > creatureType.getMaxNumberOfCreature() + 10) {
+                	continue;
+                }
+                
+//                BiomeGenBase biome = worldServer.getBiomeGenForCoords(chunkPair.chunkXPos, chunkPair.chunkZPos);
+//                List list = biome.getSpawnableList(EnumCreatureType.monster);
+//                if (!list.isEmpty()) {
+//                	SpawnListEntry spawn = (SpawnListEntry)WeightedRandom.getRandomItem(worldServer.rand, list);
+//                    int numspawns = spawn.minGroupCount + worldServer.rand.nextInt(1 + spawn.maxGroupCount - spawn.minGroupCount);
+//                }
 
                 if (!((Boolean)eligibleChunksForSpawning.get(chunkPair)).booleanValue()) {
                     ChunkPosition chunkPos = getRandomSpawningPointInChunk(worldServer, chunkPair.chunkXPos, chunkPair.chunkZPos);
-                    int chunkX = chunkPos.x;
-                    int chunkY = chunkPos.y;
-                    int chunkZ = chunkPos.z;
+//                    int chunkX = chunkPos.x;
+//                    int chunkY = chunkPos.y;
+//                    int chunkZ = chunkPos.z;
 
-                    if (!worldServer.isBlockNormalCube(chunkX, chunkY, chunkZ) && worldServer.getBlockMaterial(chunkX, chunkY, chunkZ) == creatureType.getCreatureMaterial()) {
+                    boolean normalBlock = worldServer.isBlockNormalCube(chunkPos.x, chunkPos.y, chunkPos.z);
+                    Material material = worldServer.getBlockMaterial(chunkPos.x, chunkPos.y, chunkPos.z);
+                    if (!normalBlock && material == creatureType.getCreatureMaterial()) {
                         int nSpawned = 0;
                         int outerLoop = 0;
 
                         while (outerLoop < 3) {
-                            int newX = chunkX;
-                            int newY = chunkY;
-                            int newZ = chunkZ;
+                            int newX = chunkPos.x;
+                            int newY = chunkPos.y;
+                            int newZ = chunkPos.z;
                             final byte chunkRange = 6;
                             int chunkRangeIterations = 0;
 
-                            while (chunkRangeIterations < 4/*true*/) {
-//                                if (innerLoopIterations < 4) {
+                            while (true) {
+                                if (chunkRangeIterations < 4) {
                                     newX += worldServer.rand.nextInt(chunkRange) - worldServer.rand.nextInt(chunkRange);
                                     newY += worldServer.rand.nextInt(1) - worldServer.rand.nextInt(1);
                                     newZ += worldServer.rand.nextInt(chunkRange) - worldServer.rand.nextInt(chunkRange);
@@ -124,34 +129,34 @@ public final class SpawnerWalkingDead {
                                                 EntityWalkingDead walker = new EntityWalkingDead(worldServer);
                                                 walker.setLocationAndAngles((double)adjX, (double)adjY, (double)adjZ, worldServer.rand.nextFloat() * 360.0F, 0.0F);
 
-                                                if (walker.getCanSpawnHere()) {
+                                                if (walker.getCanSpawnHere() && nSpawned < walker.getMaxSpawnedInChunk()) {
                                                     ++nSpawned;
                                                     boolean spawned = worldServer.spawnEntityInWorld(walker);
                                                     walker.initCreature();
                                                     if (spawned) {
-                                                    	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ);
+                                                    	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + "(" + nSpawned + ")");
                                                     }
 
-                                                    if (nSpawned >= walker.getMaxSpawnedInChunk()) {
-                                                        continue label110;
-                                                    }
+//                                                    if (nSpawned >= walker.getMaxSpawnedInChunk()) {
+//                                                        continue label110;
+//                                                    }
                                                 }
                                                 eligibleChunks += nSpawned;
                                             }
                                         }
                                     }
                                     ++chunkRangeIterations;
-//                                    continue;
-//                                }
+                                    continue;
+                                }
                                 ++outerLoop;
-//                                break;
+                                break;
                             }
                         }
                     }
                 }
             }
-        }
 //        }
+//    }
         return eligibleChunks;
     }
 

@@ -104,9 +104,10 @@ public class EntityWalkingDead extends EntityMob {
 		boolean notColliding = worldObj.getCollidingBoundingBoxes(this, boundingBox).isEmpty();
 		boolean liquid = worldObj.isAnyLiquid(boundingBox);
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
-		boolean light = worldObj.getFullBlockLightValue(x, y, z) > 8;
+		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
+//		boolean light = worldObj.getFullBlockLightValue(x, y, z) > 8;
 		
-        return isGrass && light && clear && notColliding && !liquid && getBlockPathWeight(x, y, z) >= 0.0F;
+        return isGrass && /*light &&*/ clear && notColliding && !liquid && getBlockPathWeight(x, y, z) >= 0.0F;
     }
 	
 	public float getSpeedModifier() {

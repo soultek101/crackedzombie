@@ -9,6 +9,8 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
@@ -56,91 +58,81 @@ public final class SpawnerWalkingDead {
             }
         }
         
-        final int walkerSpawns = 20;
         int eligibleChunks = 0;
         ChunkCoordinates spawnPoint = worldServer.getSpawnPoint();
         EnumCreatureType creatureType = EnumCreatureType.monster;
+		final int walkerSpawns = WalkingDead.instance.getWalkerSpawns();
+//		int maxMonsters = creatureType.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256;
 
-//        if (worldServer.countEntities(creatureType.getCreatureClass()) <= creatureType.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256) {
-        Iterator iter = eligibleChunksForSpawning.keySet().iterator();
-        ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
-        Collections.shuffle(tmp);
-        iter = tmp.iterator();
-            
-//            label110:
-            	
-        while (iter.hasNext()) { // iterate through the eligible chunks
-            ChunkCoordIntPair chunkPair = (ChunkCoordIntPair)iter.next();
-            int nCreaturesSpawnable = worldServer.countEntities(creatureType.getCreatureClass());
-            if (nCreaturesSpawnable > creatureType.getMaxNumberOfCreature() + walkerSpawns) {
-            	continue;
-            }
-                
-            if (!((Boolean)eligibleChunksForSpawning.get(chunkPair)).booleanValue()) {
-                ChunkPosition chunkPos = getRandomSpawningPointInChunk(worldServer, chunkPair.chunkXPos, chunkPair.chunkZPos);
-
-                boolean normalBlock = worldServer.isBlockNormalCube(chunkPos.x, chunkPos.y, chunkPos.z);
-                Material material = worldServer.getBlockMaterial(chunkPos.x, chunkPos.y, chunkPos.z);
-                if (!normalBlock && material == creatureType.getCreatureMaterial()) {
-                    int nSpawned = 0;
-                    int outerLoop = 0;
-
-                    while (outerLoop < 3) {
-                        int newX = chunkPos.x;
-                        int newY = chunkPos.y;
-                        int newZ = chunkPos.z;
-                        final byte chunkRange = 6;
-                        int chunkRangeIterations = 0;
-
-                        while (true) {
-                            if (chunkRangeIterations < 4) {
-                                newX += worldServer.rand.nextInt(chunkRange) - worldServer.rand.nextInt(chunkRange);
-                                newY += worldServer.rand.nextInt(1) - worldServer.rand.nextInt(1);
-                                newZ += worldServer.rand.nextInt(chunkRange) - worldServer.rand.nextInt(chunkRange);
-
-                                if (canCreatureTypeSpawnAtLocation(creatureType, worldServer, newX, newY, newZ)) {
-                                    float adjX = (float)newX + 0.5F;
-                                    float adjY = (float)newY;
-                                    float adjZ = (float)newZ + 0.5F;
-
-                                    if (worldServer.getClosestPlayer((double)adjX, (double)adjY, (double)adjZ, 16.0D) == null) {
-                                        float deltaX = adjX - (float)spawnPoint.posX;
-                                        float deltaY = adjY - (float)spawnPoint.posY;
-                                        float deltaZ = adjZ - (float)spawnPoint.posZ;
-                                        float magnitude = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
-
-                                        if (magnitude >= 576.0F) {
-                                            EntityWalkingDead walker = new EntityWalkingDead(worldServer);
-                                            walker.setLocationAndAngles((double)adjX, (double)adjY, (double)adjZ, worldServer.rand.nextFloat() * 360.0F, 0.0F);
-
-                                            if (walker.getCanSpawnHere() && nSpawned < walker.getMaxSpawnedInChunk()) {
-                                                ++nSpawned;
-                                                boolean spawned = worldServer.spawnEntityInWorld(walker);
-                                                walker.initCreature();
-                                                if (spawned) {
-                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + "(" + nSpawned + ")");
-                                                }
-
-//                                                    if (nSpawned >= walker.getMaxSpawnedInChunk()) {
-//                                                        continue label110;
-//                                                    }
-                                            }
-                                            eligibleChunks += nSpawned;
-                                        }
-                                    }
-                                }
-                                ++chunkRangeIterations;
-                                continue;
-                            }
-                            ++outerLoop;
-                            break;
-                        }
-                    }
-                }
-            }
+        if (worldServer.countEntities(EntityWalkingDead.class) < walkerSpawns) {
+	        Iterator iter = eligibleChunksForSpawning.keySet().iterator();
+	        ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
+	        Collections.shuffle(tmp);
+	        iter = tmp.iterator();
+	            
+	        while (iter.hasNext()) { // iterate through the eligible chunks
+	            ChunkCoordIntPair chunkPair = (ChunkCoordIntPair)iter.next();
+	                
+	            if (!((Boolean)eligibleChunksForSpawning.get(chunkPair)).booleanValue()) {
+	                ChunkPosition chunkPos = getRandomSpawningPointInChunk(worldServer, chunkPair.chunkXPos, chunkPair.chunkZPos);
+	
+	                boolean normalBlock = worldServer.isBlockNormalCube(chunkPos.x, chunkPos.y, chunkPos.z);
+	                Material material = worldServer.getBlockMaterial(chunkPos.x, chunkPos.y, chunkPos.z);
+	                if (!normalBlock && material == creatureType.getCreatureMaterial()) {
+	                    int nSpawned = 0;
+	                    int spawnCount = 0;
+	
+	                    while (spawnCount < 3) {
+	                        int newX = chunkPos.x;
+	                        int newY = chunkPos.y;
+	                        int newZ = chunkPos.z;
+	                        final byte chunkRange = 6;
+	                        int spawnAttempts = 0;
+	
+	                        while (true) {
+	                            if (spawnAttempts < 4) {
+	                                newX += worldServer.rand.nextInt(chunkRange) - worldServer.rand.nextInt(chunkRange);
+	                                newY += worldServer.rand.nextInt(1) - worldServer.rand.nextInt(1);
+	                                newZ += worldServer.rand.nextInt(chunkRange) - worldServer.rand.nextInt(chunkRange);
+	
+	                                if (canCreatureTypeSpawnAtLocation(creatureType, worldServer, newX, newY, newZ)) {
+	                                    float adjX = (float)newX + 0.5F;
+	                                    float adjY = (float)newY;
+	                                    float adjZ = (float)newZ + 0.5F;
+	
+	                                    if (worldServer.getClosestPlayer((double)adjX, (double)adjY, (double)adjZ, 12.0D) == null) {
+	                                        float deltaX = adjX - (float)spawnPoint.posX;
+	                                        float deltaY = adjY - (float)spawnPoint.posY;
+	                                        float deltaZ = adjZ - (float)spawnPoint.posZ;
+	                                        float sqrDistance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+	
+	                                        if (sqrDistance >= 256.0F) {
+	                                            EntityWalkingDead walker = new EntityWalkingDead(worldServer);
+	                                            walker.setLocationAndAngles((double)adjX, (double)adjY, (double)adjZ, worldServer.rand.nextFloat() * 360.0F, 0.0F);
+	
+	                                            if (walker.getCanSpawnHere() && nSpawned < walker.getMaxSpawnedInChunk()) {
+	                                                ++nSpawned;
+	                                                boolean spawned = worldServer.spawnEntityInWorld(walker);
+	                                                walker.initCreature();
+	                                                if (spawned) {
+	                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + "(" + nSpawned + ")");
+	                                                }
+	                                            }
+	                                            eligibleChunks += nSpawned;
+	                                        }
+	                                    }
+	                                }
+	                                ++spawnAttempts;
+	                                continue;
+	                            }
+	                            ++spawnCount;
+	                            break;
+	                        }
+	                    }
+	                }
+	            }
+	        }
         }
-//        }
-//    }
         return eligibleChunks;
     }
 
@@ -153,5 +145,44 @@ public final class SpawnerWalkingDead {
 			return spawnBlock && blockID != Block.bedrock.blockID && !world.isBlockNormalCube(x, y, z) && !world.getBlockMaterial(x, y, z).isLiquid() && !world.isBlockNormalCube(x, y + 1, z);
 		}
 	}
+	
+	public static int despawnWalker(WorldServer worldObj, Class cls) {
+    	int count = 0;
+    	
+    	for (int j = 0; j < worldObj.loadedEntityList.size(); j++) {
+            Entity entity = (Entity)worldObj.loadedEntityList.get(j);
+            if (!(entity instanceof EntityWalkingDead)) {
+            	continue;
+            }
+            count += entityDespawnCheck(worldObj, (EntityLiving)entity);
+        }
+        return count;
+    }
+	
+	protected static int entityDespawnCheck(WorldServer worldObj, EntityLiving entity) {
+        EntityPlayer entityplayer = worldObj.getClosestPlayerToEntity(entity, -1D);
+        if (entityplayer != null) {
+            double d = ((Entity) (entityplayer)).posX - entity.posX;
+            double d1 = ((Entity) (entityplayer)).posY - entity.posY;
+            double d2 = ((Entity) (entityplayer)).posZ - entity.posZ;
+            double d3 = d * d + d1 * d1 + d2 * d2;
+            if (d3 > 16384D) {
+            	entity.setDead();
+            	System.out.println("Walker has been set dead (distance)");
+            	return 1;
+            }
+            if (entity.getAge() > 600 && worldObj.rand.nextInt(800) == 0) {
+                if (d3 < 1024D) {
+                	entity.attackEntityFrom(null, 0);
+                	System.out.println("Walker has been attackEntityFrom'd");
+                } else {
+                	entity.setDead();
+                	System.out.println("Walker has been set dead (age)");
+                	return 1;
+                }
+            }
+        }
+        return 0;
+    }
 
 }

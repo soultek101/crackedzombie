@@ -1,6 +1,7 @@
 package walkingdead.common;
 
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
@@ -35,6 +36,7 @@ public class WalkingDead {
 	public static WalkingDead instance;
 	
 	private int walkerSpawnProb;
+	private int walkerSpawns;
 	
 	@SidedProxy(
 		clientSide = "walkingdead.client.ClientProxyWalkingDead",
@@ -48,12 +50,16 @@ public class WalkingDead {
 	
 	@PreInit
 	public void preLoad(FMLPreInitializationEvent event) {
-		String comments = " WalkingDead Mod Config\n Michael Sheppard (crackedEgg)\n";
+		String comments = " WalkingDead Mod Config\n Michael Sheppard (crackedEgg)\n\n"
+				        + " walkerSpawns adjusts the number of walkers spawned, play\n"
+				        + " with it to see what you like. The higher the number the more\n"
+				        + " walkers will spawn.";
 		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		
-		walkerSpawnProb = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawnProb", 32).getInt();
+		walkerSpawnProb = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawnProb", 10).getInt();
+		walkerSpawns = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawns", 40).getInt();
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, comments);
 		
 		config.save();
@@ -67,7 +73,17 @@ public class WalkingDead {
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id, 0x00AFAF, 0x799C45);
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
-		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 1, 8, EnumCreatureType.monster);
+		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster);
+		// remove zombie spawns for these biomes
+		BiomeGenBase[] biomes = { BiomeGenBase.beach, BiomeGenBase.desert, BiomeGenBase.desertHills,
+				BiomeGenBase.extremeHills, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.icePlains,
+				BiomeGenBase.jungle, BiomeGenBase.plains, BiomeGenBase.river, BiomeGenBase.swampland, BiomeGenBase.taiga
+		};  
+		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
+	}
+	
+	public int getWalkerSpawns() {
+		return walkerSpawns;
 	}
 	
 }

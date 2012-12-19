@@ -83,10 +83,6 @@ public class EntityWalkingDead extends EntityMob {
 				}
 			}
 		}
-		if (rand.nextInt(5) == 0) {
-			entityAge = 0; // reset age
-		}
-
 		super.onLivingUpdate();
 	}
 	
@@ -96,18 +92,20 @@ public class EntityWalkingDead extends EntityMob {
 	}
 	
 	public boolean getCanSpawnHere() {
+//		return isValidLightLevel() && super.getCanSpawnHere();
 		int x = MathHelper.floor_double(posX);
         int y = MathHelper.floor_double(boundingBox.minY);
         int z = MathHelper.floor_double(posZ);
         
-		boolean clear = worldObj.checkIfAABBIsClear(boundingBox);
+		boolean isClear = worldObj.checkIfAABBIsClear(boundingBox);
 		boolean notColliding = worldObj.getCollidingBoundingBoxes(this, boundingBox).isEmpty();
-		boolean liquid = worldObj.isAnyLiquid(boundingBox);
+		boolean isLiquid = worldObj.isAnyLiquid(boundingBox);
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
-//		boolean light = worldObj.getFullBlockLightValue(x, y, z) > 8;
+		boolean isStone = worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID;
+		boolean isGround = (isGrass || isSand || isStone);
 		
-        return isGrass && /*light &&*/ clear && notColliding && !liquid && getBlockPathWeight(x, y, z) >= 0.0F;
+        return isGround && isClear && notColliding && !isLiquid && getBlockPathWeight(x, y, z) >= 0.0F;
     }
 	
 	public float getSpeedModifier() {
@@ -142,7 +140,7 @@ public class EntityWalkingDead extends EntityMob {
 	
 	@Override
 	protected boolean canDespawn() {
-		return false; // they're already dead, why despawn?
+		return true;
 	}
 
 	protected boolean isAIEnabled() {

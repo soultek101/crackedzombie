@@ -1,6 +1,8 @@
 package walkingdead.common;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraftforge.common.EnumHelper;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
@@ -18,7 +20,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @Mod (
 	modid = "WalkingDeadMod",
 	name = "WalkingDead Mod",
-	version = "1.4.5"
+	version = "1.4.6"
 )
 
 @NetworkMod (
@@ -29,7 +31,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class WalkingDead {
 	
 	public String getVersion() {
-		return "1.4.5";
+		return "1.4.6";
 	}
 	
 	@Instance
@@ -44,6 +46,7 @@ public class WalkingDead {
 	)
 	
 	public static CommonProxyWalkingDead proxy;
+//	public static EnumCreatureType walkerType;
 	
 	public WalkingDead() {
 	}
@@ -59,7 +62,7 @@ public class WalkingDead {
 		config.load();
 		
 		walkerSpawnProb = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawnProb", 10).getInt();
-		walkerSpawns = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawns", 40).getInt();
+		walkerSpawns = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawns", 30).getInt();
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, comments);
 		
 		config.save();
@@ -73,7 +76,10 @@ public class WalkingDead {
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id, 0x00AFAF, 0x799C45);
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
-		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster);
+		
+//		walkerType = EnumHelper.addCreatureType("walker", EntityWalkingDead.class, 50, Material.air, false);
+		
+		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, /*walkerType*/EnumCreatureType.monster);
 		// remove zombie spawns for these biomes
 		BiomeGenBase[] biomes = { BiomeGenBase.beach, BiomeGenBase.desert, BiomeGenBase.desertHills,
 				BiomeGenBase.extremeHills, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.icePlains,

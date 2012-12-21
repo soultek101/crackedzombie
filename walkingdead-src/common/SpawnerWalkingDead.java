@@ -60,7 +60,7 @@ public final class SpawnerWalkingDead {
         
         int eligibleChunks = 0;
         ChunkCoordinates spawnPoint = worldServer.getSpawnPoint();
-        EnumCreatureType creatureType = EnumCreatureType.monster;
+        EnumCreatureType creatureType = EnumCreatureType.monster;//(EnumCreatureType)WalkingDead.walkerType;
 		final int walkerSpawns = WalkingDead.instance.getWalkerSpawns();
 //		int maxMonsters = creatureType.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256;
 
@@ -115,7 +115,7 @@ public final class SpawnerWalkingDead {
 	                                                boolean spawned = worldServer.spawnEntityInWorld(walker);
 	                                                walker.initCreature();
 	                                                if (spawned) {
-	                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + "(" + nSpawned + ")");
+	                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + " (" + nSpawned + ")");
 	                                                }
 	                                            }
 	                                            eligibleChunks += nSpawned;
@@ -172,14 +172,14 @@ public final class SpawnerWalkingDead {
             	return 1;
             }
             if (entity.getAge() > 600 && worldObj.rand.nextInt(800) == 0) {
-                if (d3 < 1024D) {
-                	entity.attackEntityFrom(null, 0);
-                	System.out.println("Walker has been attackEntityFrom'd");
-                } else {
+//                if (d3 < 1024D) {
+//                	entity.attackEntityFrom(null, 0);
+//                	System.out.println("Walker has been attackEntityFrom'd");
+//                } else {
                 	entity.setDead();
                 	System.out.println("Walker has been set dead (age)");
                 	return 1;
-                }
+//                }
             }
         }
         return 0;

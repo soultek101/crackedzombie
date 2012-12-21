@@ -13,8 +13,10 @@ public class ServerTickHandler implements ITickHandler {
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
 		if (type.contains(TickType.WORLD)) {
 			WorldServer world = (WorldServer)tickData[0];
-			if (world.rand.nextBoolean()) {
-				SpawnerWalkingDead.despawnWalker(world, WalkingDead.class);
+			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
+				if (world.rand.nextBoolean()) {
+					SpawnerWalkingDead.despawnWalker(world, WalkingDead.class);
+				}
 			}
 		}
 	}

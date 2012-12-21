@@ -1,7 +1,7 @@
 package walkingdead.common;
 
-import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 public class CommonProxyWalkingDead {
 	public void registerRenderers() {}

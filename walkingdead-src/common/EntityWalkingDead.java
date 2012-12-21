@@ -2,8 +2,9 @@ package walkingdead.common;
 
 import javax.swing.text.html.parser.Entity;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureAttribute;
@@ -94,16 +95,16 @@ public class EntityWalkingDead extends EntityMob {
 	public boolean getCanSpawnHere() {
 //		return isValidLightLevel() && super.getCanSpawnHere();
 		int x = MathHelper.floor_double(posX);
-        int y = MathHelper.floor_double(boundingBox.minY);
-        int z = MathHelper.floor_double(posZ);
+		int y = MathHelper.floor_double(boundingBox.minY);
+		int z = MathHelper.floor_double(posZ);
         
 		boolean isClear = worldObj.checkIfAABBIsClear(boundingBox);
 		boolean notColliding = worldObj.getCollidingBoundingBoxes(this, boundingBox).isEmpty();
 		boolean isLiquid = worldObj.isAnyLiquid(boundingBox);
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
-		boolean isStone = worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID;
-		boolean isGround = (isGrass || isSand || isStone);
+//		boolean isStone = worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID;
+		boolean isGround = (isGrass || isSand/* || isStone*/);
 		
         return isGround && isClear && notColliding && !isLiquid && getBlockPathWeight(x, y, z) >= 0.0F;
     }
@@ -290,7 +291,7 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	public void initCreature() {
-		canPickUpLoot = rand.nextFloat() < field_82181_as[worldObj.difficultySetting];
+		canPickUpLoot = rand.nextFloat() < pickUpLootProability[worldObj.difficultySetting]; // 1.4.6 - pickUpLootProability
 
 		if (worldObj.rand.nextFloat() < 0.05F) {
 			setIsVillager(true);
@@ -333,7 +334,7 @@ public class EntityWalkingDead extends EntityMob {
 	@SideOnly(Side.CLIENT)
 	public void handleHealthUpdate(byte health) {
 		if (health == 16) {
-			worldObj.playSound(posX + 0.5D, posY + 0.5D, posZ + 0.5D, "mob.zombie.remedy", 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F);
+			worldObj.playSound(posX + 0.5D, posY + 0.5D, posZ + 0.5D, "mob.zombie.remedy", 1.0F + rand.nextFloat(), rand.nextFloat() * 0.7F + 0.3F, false);
 		} else {
 			super.handleHealthUpdate(health);
 		}

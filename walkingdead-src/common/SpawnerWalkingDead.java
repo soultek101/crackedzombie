@@ -146,6 +146,8 @@ public final class SpawnerWalkingDead {
 		}
 	}
 	
+	// This function is from DrZharks Custom Mob Spawner. It has been modified to suit my needs.
+	// http://www.minecraftforum.net/topic/769339-10-custom-mob-spawner/
 	public static int despawnWalker(WorldServer worldObj, Class cls) {
     	int count = 0;
     	
@@ -159,27 +161,24 @@ public final class SpawnerWalkingDead {
         return count;
     }
 	
+	// This function is from DrZharks Custom Mob Spawner. It has been modified to suit my needs.
+	// http://www.minecraftforum.net/topic/769339-10-custom-mob-spawner/
 	protected static int entityDespawnCheck(WorldServer worldObj, EntityLiving entity) {
         EntityPlayer entityplayer = worldObj.getClosestPlayerToEntity(entity, -1D);
         if (entityplayer != null) {
-            double d = ((Entity) (entityplayer)).posX - entity.posX;
-            double d1 = ((Entity) (entityplayer)).posY - entity.posY;
-            double d2 = ((Entity) (entityplayer)).posZ - entity.posZ;
-            double d3 = d * d + d1 * d1 + d2 * d2;
-            if (d3 > 16384D) {
+            double deltaX = ((Entity) (entityplayer)).posX - entity.posX;
+            double deltaY = ((Entity) (entityplayer)).posY - entity.posY;
+            double deltaZ = ((Entity) (entityplayer)).posZ - entity.posZ;
+            double sqrDistance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+            if (sqrDistance > 16384D) {
             	entity.setDead();
             	System.out.println("Walker has been set dead (distance)");
             	return 1;
             }
             if (entity.getAge() > 600 && worldObj.rand.nextInt(800) == 0) {
-//                if (d3 < 1024D) {
-//                	entity.attackEntityFrom(null, 0);
-//                	System.out.println("Walker has been attackEntityFrom'd");
-//                } else {
-                	entity.setDead();
-                	System.out.println("Walker has been set dead (age)");
-                	return 1;
-//                }
+            	entity.setDead();
+            	System.out.println("Walker has been set dead (age)");
+            	return 1;
             }
         }
         return 0;

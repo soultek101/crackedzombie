@@ -93,7 +93,6 @@ public class EntityWalkingDead extends EntityMob {
 	}
 	
 	public boolean getCanSpawnHere() {
-//		return isValidLightLevel() && super.getCanSpawnHere();
 		int x = MathHelper.floor_double(posX);
 		int y = MathHelper.floor_double(boundingBox.minY);
 		int z = MathHelper.floor_double(posZ);
@@ -103,10 +102,8 @@ public class EntityWalkingDead extends EntityMob {
 		boolean isLiquid = worldObj.isAnyLiquid(boundingBox);
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
-//		boolean isStone = worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID;
-		boolean isGround = (isGrass || isSand/* || isStone*/);
 		
-        return isGround && isClear && notColliding && !isLiquid && getBlockPathWeight(x, y, z) >= 0.0F;
+        return (isGrass || isSand) && isClear && notColliding && !isLiquid;
     }
 	
 	public float getSpeedModifier() {

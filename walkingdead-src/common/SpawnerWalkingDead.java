@@ -105,8 +105,9 @@ public final class SpawnerWalkingDead {
 	                                        float deltaY = adjY - (float)spawnPoint.posY;
 	                                        float deltaZ = adjZ - (float)spawnPoint.posZ;
 	                                        float sqrDistance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+	                                        float distance = MathHelper.sqrt_float(sqrDistance);
 	
-	                                        if (sqrDistance >= 256.0F) {
+	                                        if (distance >= 16.0F) { // sqr(16) = 256
 	                                            EntityWalkingDead walker = new EntityWalkingDead(worldServer);
 	                                            walker.setLocationAndAngles((double)adjX, (double)adjY, (double)adjZ, worldServer.rand.nextFloat() * 360.0F, 0.0F);
 	
@@ -170,14 +171,16 @@ public final class SpawnerWalkingDead {
             double deltaY = ((Entity) (entityplayer)).posY - entity.posY;
             double deltaZ = ((Entity) (entityplayer)).posZ - entity.posZ;
             double sqrDistance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
-            if (sqrDistance > 16384D) {
+            double distance = MathHelper.sqrt_double(sqrDistance);
+            if (distance > 128.0) { // sqr(128) = 16384
             	entity.setDead();
-            	System.out.println("Walker has been set dead (distance)");
+            	System.out.println("Walker has been set dead (distance: " + distance + ")");
             	return 1;
             }
-            if (entity.getAge() > 600 && worldObj.rand.nextInt(800) == 0) {
+            int age = entity.getAge();
+            if (age > 600 && worldObj.rand.nextInt(800) == 0) {
             	entity.setDead();
-            	System.out.println("Walker has been set dead (age)");
+            	System.out.println("Walker has been set dead (age: " + age +")");
             	return 1;
             }
         }

@@ -2,8 +2,11 @@
 
 echo "== Creating jars =="
 
-MCVERSION=1.4.5
-FORGEVERSION=430
+KEYPASS=ds1b8zs
+STOREPASS=ds1b8zs
+
+MCVERSION=1.4.6
+FORGEVERSION=471
 
 DATE=`date +%Y%m%d`
 
@@ -12,10 +15,10 @@ MCMODDATA="
 {\n
   \"modid\": \"WalkingDeadMod\",\n
   \"name\": \"WalkingDead Mod\",\n
-  \"description\": \"Walking Dead mod adds monitor lizards, turtles, iguanas, chameleons, and crocodiles. Komodo Dragons! Man-eating Crocodiles! And cute little turtles.\",\n
+  \"description\": \"Walking Dead mod adds zombies in the day time! Walkers they are called.\",\n
   \"version\": \"$DATE\",\n
   \"mcversion\": \"$MCVERSION\",\n
-  \"url\": \"http://www.minecraftforum.net/topic/585469-132modloader-crackedeggs-mods-reptiles-parachute-updated-08272012/\",\n
+  \"url\": \"\",\n
   \"updateUrl\": \"\",\n
   \"authors\": [\n
     \"crackedEgg\"\n
@@ -28,6 +31,7 @@ MCMODDATA="
 }\n
 ]"
 
+
 echo "> copying files"
 
 REOBF="reobf/minecraft/"
@@ -35,10 +39,10 @@ cd $REOBF
 
 RDIR="$HOME/projects/walkingdead-src-1.4.x"
 
-rm -f $RDIR/walkingDead/common/*.class
-rm -f $RDIR/walkingDead/client/*.class
+rm -f $RDIR/walkingdead/common/*.class
+rm -f $RDIR/walkingdead/client/*.class
 
-cp -R walkingDead/ $RDIR
+cp -R walkingdead/ $RDIR
 echo -e $MCMODDATA > $RDIR/mcmod.info
 
 echo "> making mod jar file"
@@ -47,8 +51,13 @@ cd $RDIR
 
 JAR="walkingdead-$MCVERSION-forge-$FORGEVERSION.jar"
 
-rm -f $JAR
-jar -cf $JAR walkingDead/  mcmod.info mob/ sound/ logo/
+echo -e "Main-Class: walkingdead.common.WalkingDead\nClass-Path: $JAR\n" > $RDIR/manifest.txt
 
-echo " - Mod build complete"
+rm -f $JAR
+jar -cfm $JAR manifest.txt walkingdead/ mcmod.info logo/
+
+echo "> signing $JAR"
+jarsigner -keystore $HOME/.keystore -keypass $KEYPASS -storepass $STOREPASS $JAR cracked 
+
+echo " - Mod build complete - `date "+%H:%M:%S"`" 
 

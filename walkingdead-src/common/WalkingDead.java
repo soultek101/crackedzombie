@@ -1,5 +1,9 @@
 package walkingdead.common;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraftforge.client.EnumHelperClient;
@@ -8,6 +12,8 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.BiomeGenEnd;
+import net.minecraft.world.biome.BiomeGenHell;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -96,26 +102,46 @@ public class WalkingDead {
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id, 0x00AFAF, 0x799C45);
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
 		
-//		EnumCreatureType walkerType = EnumHelper.addCreatureType("walker", EntityWalkingDead.class, 50, Material.air, false);
-		
 		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, /*walkerType*/EnumCreatureType.monster);
 		
 		// remove creeper, skeleton, and zombie spawns for these biomes
-		BiomeGenBase[] biomes = { BiomeGenBase.beach, BiomeGenBase.desert, BiomeGenBase.desertHills,
-				BiomeGenBase.extremeHills, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.icePlains,
-				BiomeGenBase.jungle, BiomeGenBase.plains, BiomeGenBase.river, BiomeGenBase.swampland, BiomeGenBase.taiga,
-				BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungleHills, BiomeGenBase.mushroomIsland,
-				BiomeGenBase.mushroomIslandShore, BiomeGenBase.taigaHills
-		};
+//		BiomeGenBase[] biomes = { 
+//			BiomeGenBase.beach, BiomeGenBase.desert, BiomeGenBase.desertHills,
+//			BiomeGenBase.extremeHills, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.icePlains,
+//			BiomeGenBase.jungle, BiomeGenBase.plains, BiomeGenBase.river, BiomeGenBase.swampland, BiomeGenBase.taiga,
+//			BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungleHills, BiomeGenBase.mushroomIsland,
+//			BiomeGenBase.mushroomIslandShore, BiomeGenBase.taigaHills
+//		};
+		BiomeGenBase[] biomes = getVanillaBiomes();
+		
 		if (!spawnCreepers) {
 			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
+			System.out.println("Removing creeper spawns");
 		}
 		if (!spawnSkeletons) {
 			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
+			System.out.println("Removing skeleton spawns");
 		}
 		if (!spawnZombies) {
 			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
+			System.out.println("Removing zombie spawns");
 		}
+	}
+	
+	public BiomeGenBase[] getVanillaBiomes() {
+		LinkedList linkedlist = new LinkedList();
+		List biomeList = new ArrayList();
+		for (BiomeGenBase biomegenbase : BiomeGenBase.biomeList) {
+			if (biomegenbase == null) {
+				continue;
+			}
+			biomeList.add(biomegenbase.biomeName);
+
+			if (!(biomegenbase instanceof BiomeGenHell) && !(biomegenbase instanceof BiomeGenEnd)) {
+				linkedlist.add(biomegenbase);
+			}
+		}
+		return (BiomeGenBase[]) linkedlist.toArray(new BiomeGenBase[0]);
 	}
 	
 	public int getWalkerSpawns() {

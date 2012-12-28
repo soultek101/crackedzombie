@@ -225,8 +225,11 @@ public class EntityWalkingDead extends EntityMob {
 	protected void SetHeldItem() {
 		super.func_82164_bB();
 
-		if (rand.nextFloat() < (worldObj.difficultySetting == 2 ? 0.05F : 0.01F)) {
-			if (rand.nextInt(3) == 0) {
+		int maxInt = worldObj.difficultySetting > 1 ? 16 : 32;
+		if (rand.nextInt(maxInt) == 0) {
+			if (rand.nextInt(5) == 0) {
+				setCurrentItemOrArmor(0, new ItemStack(Item.swordDiamond));
+			} else if (rand.nextInt(3) == 0){
 				setCurrentItemOrArmor(0, new ItemStack(Item.swordSteel));
 			} else {
 				setCurrentItemOrArmor(0, new ItemStack(Item.shovelSteel));

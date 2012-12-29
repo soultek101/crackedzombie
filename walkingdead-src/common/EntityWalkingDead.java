@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
@@ -119,7 +120,7 @@ public class EntityWalkingDead extends EntityMob {
 
 	@SideOnly(Side.CLIENT)
 	public String getTexture() {
-		return isVillager() ? "/mob/zombie_villager.png"	: "/mob/zombie.png";
+		return isVillager() ? "/mob/zombie_villager.png" : "/mob/zombie.png";
 	}
 
 	public int getMaxHealth() {
@@ -198,12 +199,32 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	protected void playStepSound(int par1, int par2, int par3, int par4) {
-		func_85030_a("mob.zombie.step", 0.15F, 1.0F);
+		playSound("mob.zombie.step", 0.15F, 1.0F);
 	}
 
 	protected int getDropItemId() {
-		return Item.rottenFlesh.shiftedIndex;
+		ItemStack heldItem = getHeldItem();
+		if (heldItem != null) {
+			return heldItem.itemID;
+		} else {
+			return Item.rottenFlesh.itemID;
+		}
 	}
+	
+//	@Override
+//	public void onDeath(DamageSource damageSource) {
+//		dropEquipment();
+//		super.onDeath(damageSource);
+//	}
+	
+//	protected void dropEquipment() {
+//		for (int k = 0; k < getLastActiveItems().length; ++k) {
+//			ItemStack armor = getCurrentItemOrArmor(k);
+//			if (armor != null) {
+//				entityDropItem(armor, 0.0F);
+//			}
+//		}
+//	}
 
 	public EnumCreatureAttribute getCreatureAttribute() {
 		return EnumCreatureAttribute.UNDEAD;
@@ -212,13 +233,13 @@ public class EntityWalkingDead extends EntityMob {
 	protected void dropRareDrop(int unused) {
 		switch (rand.nextInt(3)) {
 		case 0:
-			dropItem(Item.ingotIron.shiftedIndex, 1);
+			dropItem(Item.ingotIron.itemID, 1);
 			break;
 		case 1:
-			dropItem(Item.carrot.shiftedIndex, 1);
+			dropItem(Item.carrot.itemID, 1);
 			break;
 		case 2:
-			dropItem(Item.potato.shiftedIndex, 1);
+			dropItem(Item.potato.itemID, 1);
 		}
 	}
 

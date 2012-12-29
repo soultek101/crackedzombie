@@ -9,6 +9,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -27,9 +28,9 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod (
-	modid = "WalkingDeadMod",
-	name = "WalkingDead Mod",
-	version = "1.4.6"
+	modid = WalkingDead.modid,
+	name = WalkingDead.name,
+	version = WalkingDead.version
 )
 
 @NetworkMod (
@@ -40,17 +41,23 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class WalkingDead {
 	
 	public String getVersion() {
-		return "1.4.6";
+		return WalkingDead.version;
 	}
 	
 	@Instance
 	public static WalkingDead instance;
+	
+	public static final String version = "1.4.7";
+	public static final String modid = "WalkingDeadMod";
+	public static final String name = "WalkingDead Mod";
 	
 	private int walkerSpawnProb;
 	private int walkerSpawns;
 	private boolean spawnCreepers;
 	private boolean spawnZombies;
 	private boolean spawnSkeletons;
+	private boolean spawnEnderman;
+	private boolean spawnSpiders;
 	
 	@SidedProxy(
 		clientSide = "walkingdead.client.ClientProxyWalkingDead",
@@ -65,7 +72,7 @@ public class WalkingDead {
 	
 	@PreInit
 	public void preLoad(FMLPreInitializationEvent event) {
-		String generalComments = "WalkingDead Mod Config\nMichael Sheppard (crackedEgg)\n";
+		String generalComments = WalkingDead.name + " Config\nMichael Sheppard (crackedEgg)\n";
 		String spawnProbComment = "walkerSpawnProb adjust to probability of walkers spawning,\n"
 						+ "although the custom spawning most likely overrides this. the higher the\n"
 						+ "the number the more likely walkers will spawn.";
@@ -79,6 +86,10 @@ public class WalkingDead {
 		String zombieComment = "zombieSpawns, set to false to disable zombie spawning, set to true\n"
 						+ "if you want to spawn zombies. Note that spawning zombies and other monsters\n"
 						+ "will cause the number of walkers spawned to be reduced.";
+		String endermanComment = "endermanSpawns, set to false to disable enderman spawning, set to true\n"
+						+ "if you want to spawn enderman";
+		String spiderComment = "spiderSpawns, set to false to disable spider spawning, set to true\n"
+						+ "if you want to spawn spiders";
 		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -88,6 +99,8 @@ public class WalkingDead {
 		spawnCreepers = config.get(Configuration.CATEGORY_GENERAL, "spawnCreepers", false, creeperComment).getBoolean(false);
 		spawnSkeletons = config.get(Configuration.CATEGORY_GENERAL, "spawnSkeletons", false, skeletonComment).getBoolean(false);
 		spawnZombies = config.get(Configuration.CATEGORY_GENERAL, "spawnZombies", false, zombieComment).getBoolean(false);
+		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
+		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(false);
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
 		
 		config.save();
@@ -102,41 +115,39 @@ public class WalkingDead {
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id, 0x00AFAF, 0x799C45);
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
 		
-		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, /*walkerType*/EnumCreatureType.monster);
-		
-		// remove creeper, skeleton, and zombie spawns for these biomes
-//		BiomeGenBase[] biomes = { 
-//			BiomeGenBase.beach, BiomeGenBase.desert, BiomeGenBase.desertHills,
-//			BiomeGenBase.extremeHills, BiomeGenBase.forest, BiomeGenBase.forestHills, BiomeGenBase.icePlains,
-//			BiomeGenBase.jungle, BiomeGenBase.plains, BiomeGenBase.river, BiomeGenBase.swampland, BiomeGenBase.taiga,
-//			BiomeGenBase.iceMountains, BiomeGenBase.icePlains, BiomeGenBase.jungleHills, BiomeGenBase.mushroomIsland,
-//			BiomeGenBase.mushroomIslandShore, BiomeGenBase.taigaHills
-//		};
+		// placing this function here may allow the walkers to spawn in biomes
+		// created by other mods provided those mods are loaded before this one.
 		BiomeGenBase[] biomes = getVanillaBiomes();
 		
+		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, /*walkerType*/EnumCreatureType.monster, biomes);
+		
+		// optionally remove creeper, skeleton, and zombie spawns for these biomes
 		if (!spawnCreepers) {
 			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
-			System.out.println("Removing creeper spawns");
+			System.out.println("*** Removing creeper spawns");
 		}
 		if (!spawnSkeletons) {
 			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
-			System.out.println("Removing skeleton spawns");
+			System.out.println("*** Removing skeleton spawns");
 		}
 		if (!spawnZombies) {
 			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
-			System.out.println("Removing zombie spawns");
+			System.out.println("*** Removing zombie spawns");
+		}
+		if (!spawnEnderman) {
+			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
+			System.out.println("*** Removing enderman spawns");
 		}
 	}
 	
+	// This function should get all biomes that are derived from BiomeGenBase,
+	// even those from other mods.
 	public BiomeGenBase[] getVanillaBiomes() {
 		LinkedList linkedlist = new LinkedList();
-		List biomeList = new ArrayList();
 		for (BiomeGenBase biomegenbase : BiomeGenBase.biomeList) {
 			if (biomegenbase == null) {
 				continue;
 			}
-			biomeList.add(biomegenbase.biomeName);
-
 			if (!(biomegenbase instanceof BiomeGenHell) && !(biomegenbase instanceof BiomeGenEnd)) {
 				linkedlist.add(biomegenbase);
 			}

@@ -3,13 +3,11 @@
  "modid": "WalkingDeadMod",
  "name": "WalkingDead Mod",
  "description": "Walking Dead mod adds zombies in the day time! Walkers they are called.",
- "version": "20121229",
+ "version": "20121231",
  "mcversion": "1.4.7",
  "url": "",
  "updateUrl": "",
- "authors": [
- "crackedEgg"
- ],
+ "authors": ["crackedEgg"],
  "credits": "Authored by crackedEgg",
  "logoFile": "/logo/deadLogo.png",
  "screenshots": [],

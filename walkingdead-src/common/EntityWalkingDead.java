@@ -19,6 +19,7 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
@@ -40,7 +41,9 @@ public class EntityWalkingDead extends EntityMob {
 	public EntityWalkingDead(World world) {
 		super(world);
 
-		texture = "/mob/zombie.png";
+		// random texture: number of walker textures
+		texture = "/skins/walker" + rand.nextInt(5) + ".png";
+//		texture = "/mob/zombie.png";
 		moveSpeed = 0.25F;
 		getNavigator().setBreakDoors(true);
 		getNavigator().setAvoidsWater(true);
@@ -53,7 +56,7 @@ public class EntityWalkingDead extends EntityMob {
 		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPig.class, moveSpeed, false));
 		tasks.addTask(4, new EntityAIMoveTwardsRestriction(this, moveSpeed));
 		tasks.addTask(5, new EntityAIMoveThroughVillage(this, moveSpeed, false));
-		tasks.addTask(6, new EntityAIWander(this, moveSpeed));
+		tasks.addTask(6, new EntityAIMigrate(this, moveSpeed - 0.05F));
 		tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		tasks.addTask(7, new EntityAILookIdle(this));
 		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
@@ -93,6 +96,7 @@ public class EntityWalkingDead extends EntityMob {
 		return true;
 	}
 	
+	@Override
 	public boolean getCanSpawnHere() {
 		int x = MathHelper.floor_double(posX);
 		int y = MathHelper.floor_double(boundingBox.minY);
@@ -101,10 +105,12 @@ public class EntityWalkingDead extends EntityMob {
 		boolean isClear = worldObj.checkIfAABBIsClear(boundingBox);
 		boolean notColliding = worldObj.getCollidingBoundingBoxes(this, boundingBox).isEmpty();
 		boolean isLiquid = worldObj.isAnyLiquid(boundingBox);
+		// spawns on grass, sand and very occasionally spawn on stone
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
+//		boolean isStone = (rand.nextInt(32) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
 		
-        return (isGrass || isSand) && isClear && notColliding && !isLiquid;
+        return (isGrass || isSand/* || isStone*/) && isClear && notColliding && !isLiquid;
     }
 	
 	public float getSpeedModifier() {
@@ -120,7 +126,7 @@ public class EntityWalkingDead extends EntityMob {
 
 	@SideOnly(Side.CLIENT)
 	public String getTexture() {
-		return isVillager() ? "/mob/zombie_villager.png" : "/mob/zombie.png";
+		return isVillager() ? "/skins/zombie_villager.png" : texture;
 	}
 
 	public int getMaxHealth() {
@@ -174,6 +180,12 @@ public class EntityWalkingDead extends EntityMob {
 
 		super.onUpdate();
 	}
+	
+	@Override
+	public void onStruckByLightning(EntityLightningBolt entityLightningBolt) {
+		// A little surprise... BOOM!
+		worldObj.createExplosion(this, posX, posY, posZ, 1.0F, true);
+	}
 
 	public int getAttackStrength(Entity entity) {
 		ItemStack itemstack = getHeldItem();
@@ -199,7 +211,7 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	protected void playStepSound(int par1, int par2, int par3, int par4) {
-		playSound("mob.zombie.step", 0.15F, 1.0F);
+		playSound("mob.zombie.step", 0.20F, 1.0F);
 	}
 
 	protected int getDropItemId() {
@@ -248,13 +260,31 @@ public class EntityWalkingDead extends EntityMob {
 
 		int maxInt = worldObj.difficultySetting > 1 ? 16 : 32;
 		if (rand.nextInt(maxInt) == 0) {
-			if (rand.nextInt(5) == 0) {
+			switch (rand.nextInt(8)) {
+			case 0:
 				setCurrentItemOrArmor(0, new ItemStack(Item.swordDiamond));
-			} else if (rand.nextInt(3) == 0){
+				break;
+			case 1:
 				setCurrentItemOrArmor(0, new ItemStack(Item.swordSteel));
-			} else {
+				break;
+			case 2:
+				setCurrentItemOrArmor(0, new ItemStack(Item.shovelDiamond));
+				break;
+			case 3:
 				setCurrentItemOrArmor(0, new ItemStack(Item.shovelSteel));
+				break;
+			default:
+				return;
 			}
+//			if (rand.nextInt(5) == 0) {
+//				setCurrentItemOrArmor(0, new ItemStack(Item.swordDiamond));
+//			} else if (rand.nextInt(4) == 0){
+//				setCurrentItemOrArmor(0, new ItemStack(Item.swordSteel));
+//			} else if (rand.nextInt(3) == 0){
+//				setCurrentItemOrArmor(0, new ItemStack(Item.shovelDiamond));
+//			} else {
+//				setCurrentItemOrArmor(0, new ItemStack(Item.shovelSteel));
+//			}
 		}
 	}
 
@@ -312,7 +342,7 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	public void initCreature() {
-		canPickUpLoot = rand.nextFloat() < pickUpLootProability[worldObj.difficultySetting]; // 1.4.6 - pickUpLootProability
+		canPickUpLoot = rand.nextFloat() < pickUpLootProability[worldObj.difficultySetting];
 
 		if (worldObj.rand.nextFloat() < 0.05F) {
 			setIsVillager(true);
@@ -379,6 +409,7 @@ public class EntityWalkingDead extends EntityMob {
 		worldObj.spawnEntityInWorld(villager);
 		villager.addPotionEffect(new PotionEffect(Potion.confusion.id, 200, 0));
 		worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1017, (int) posX, (int) posY, (int) posZ, 0);
+		System.out.println("Converted walker to villager!");
 	}
 
 	protected int getConversionTimeBoost() {

@@ -11,6 +11,8 @@ import net.minecraftforge.common.EnumHelper;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenEnd;
@@ -58,6 +60,7 @@ public class WalkingDead {
 	private boolean spawnSkeletons;
 	private boolean spawnEnderman;
 	private boolean spawnSpiders;
+	private boolean spawnSlime;
 	
 	@SidedProxy(
 		clientSide = "walkingdead.client.ClientProxyWalkingDead",
@@ -90,17 +93,21 @@ public class WalkingDead {
 						+ "if you want to spawn enderman";
 		String spiderComment = "spiderSpawns, set to false to disable spider spawning, set to true\n"
 						+ "if you want to spawn spiders";
+		String slimeComment = "slimeSpawns, set to false to disable slime spawning, set to true\n"
+				+ "if you want to spawn slimes";
 		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		
 		walkerSpawnProb = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawnProb", 10, spawnProbComment).getInt();
-		walkerSpawns = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawns", 30, walkerComment).getInt();
+		walkerSpawns = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawns", 60, walkerComment).getInt();
 		spawnCreepers = config.get(Configuration.CATEGORY_GENERAL, "spawnCreepers", false, creeperComment).getBoolean(false);
 		spawnSkeletons = config.get(Configuration.CATEGORY_GENERAL, "spawnSkeletons", false, skeletonComment).getBoolean(false);
 		spawnZombies = config.get(Configuration.CATEGORY_GENERAL, "spawnZombies", false, zombieComment).getBoolean(false);
 		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
 		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(false);
+		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
+		
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
 		
 		config.save();
@@ -137,6 +144,14 @@ public class WalkingDead {
 		if (!spawnEnderman) {
 			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
 			System.out.println("*** Removing enderman spawns");
+		}
+		if (!spawnSpiders) {
+			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, biomes);
+			System.out.println("*** Removing spider spawns");
+		}
+		if (!spawnSlime) {
+			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
+			System.out.println("*** Removing slime spawns");
 		}
 	}
 	

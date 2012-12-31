@@ -62,7 +62,6 @@ public final class SpawnerWalkingDead {
         ChunkCoordinates spawnPoint = worldServer.getSpawnPoint();
         EnumCreatureType creatureType = EnumCreatureType.monster;//(EnumCreatureType)WalkingDead.walkerType;
 		final int walkerSpawns = WalkingDead.instance.getWalkerSpawns();
-//		int maxMonsters = creatureType.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256;
 
         if (worldServer.countEntities(EntityWalkingDead.class) < walkerSpawns) {
 	        Iterator iter = eligibleChunksForSpawning.keySet().iterator();
@@ -104,20 +103,17 @@ public final class SpawnerWalkingDead {
 	                                        float deltaX = adjX - (float)spawnPoint.posX;
 	                                        float deltaY = adjY - (float)spawnPoint.posY;
 	                                        float deltaZ = adjZ - (float)spawnPoint.posZ;
-	                                        float sqrDistance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
-	                                        float distance = MathHelper.sqrt_float(sqrDistance);
+	                                        float distance = MathHelper.sqrt_float(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 	
-	                                        if (distance >= 16.0F) { // sqr(16) = 256
+	                                        if (distance >= 16.0F) {
 	                                            EntityWalkingDead walker = new EntityWalkingDead(worldServer);
 	                                            walker.setLocationAndAngles((double)adjX, (double)adjY, (double)adjZ, worldServer.rand.nextFloat() * 360.0F, 0.0F);
 	
 	                                            if (walker.getCanSpawnHere() && nSpawned < walker.getMaxSpawnedInChunk()) {
 	                                                ++nSpawned;
-	                                                boolean spawned = worldServer.spawnEntityInWorld(walker);
+	                                                worldServer.spawnEntityInWorld(walker);
 	                                                walker.initCreature();
-	                                                if (spawned) {
-	                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + " (" + nSpawned + ")");
-	                                                }
+                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + " (" + nSpawned + ")");
 	                                            }
 	                                            eligibleChunks += nSpawned;
 	                                        }
@@ -170,9 +166,8 @@ public final class SpawnerWalkingDead {
             double deltaX = ((Entity) (entityplayer)).posX - entity.posX;
             double deltaY = ((Entity) (entityplayer)).posY - entity.posY;
             double deltaZ = ((Entity) (entityplayer)).posZ - entity.posZ;
-            double sqrDistance = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
-            double distance = MathHelper.sqrt_double(sqrDistance);
-            if (distance > 128.0) { // sqr(128) = 16384
+            double distance = MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+            if (distance > 128.0) {
             	entity.setDead();
             	System.out.println("Walker has been set dead (distance: " + distance + ")");
             	return 1;

@@ -113,7 +113,7 @@ public final class SpawnerWalkingDead {
 	                                                ++nSpawned;
 	                                                worldServer.spawnEntityInWorld(walker);
 	                                                walker.initCreature();
-                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + " (" + nSpawned + ")");
+//                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + " (" + nSpawned + ")");
 	                                            }
 	                                            eligibleChunks += nSpawned;
 	                                        }
@@ -169,13 +169,13 @@ public final class SpawnerWalkingDead {
             double distance = MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
             if (distance > 128.0) {
             	entity.setDead();
-            	System.out.println("Walker has been set dead (distance: " + distance + ")");
+//            	System.out.println("Walker has been set dead (distance: " + distance + ")");
             	return 1;
             }
             int age = entity.getAge();
-            if (age > 600 && worldObj.rand.nextInt(800) == 0) {
+            if (age > 600 && worldObj.rand.nextInt(800) == 0 && distance > 32.0) {
             	entity.setDead();
-            	System.out.println("Walker has been set dead (age: " + age +")");
+//            	System.out.println("Walker has been set dead (age: " + age +")");
             	return 1;
             }
         }

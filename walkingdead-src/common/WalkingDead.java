@@ -37,7 +37,8 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @NetworkMod (
 	clientSideRequired = true,
-	serverSideRequired = false
+	serverSideRequired = false,
+	versionBounds = "[1.4.7]"
 )
 
 public class WalkingDead {
@@ -70,8 +71,8 @@ public class WalkingDead {
 	public static CommonProxyWalkingDead proxy;
 //	public static EnumCreatureType walkerType = EnumHelper.addCreatureType("walker", EntityWalkingDead.class, 50, Material.air, false);
 	
-	public WalkingDead() {
-	}
+//	public WalkingDead() {
+//	}
 	
 	@PreInit
 	public void preLoad(FMLPreInitializationEvent event) {

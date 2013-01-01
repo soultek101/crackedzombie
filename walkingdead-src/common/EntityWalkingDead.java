@@ -1,11 +1,15 @@
 package walkingdead.common;
 
-import javax.swing.text.html.parser.Entity;
+
+import java.util.Iterator;
+import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.IEntitySelector;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
@@ -23,6 +27,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -33,17 +38,20 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 public class EntityWalkingDead extends EntityMob {
 	
 	private int conversionTime = 0;
+	private String villager_texture;
+	private final float attackDistance = 16.0F;
 
 	public EntityWalkingDead(World world) {
 		super(world);
 
 		// random texture: number of walker textures
-		texture = "/skins/walker" + rand.nextInt(5) + ".png";
-//		texture = "/mob/zombie.png";
+		texture = "/skins/walker" + rand.nextInt(6) + ".png";
+		villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png";
 		moveSpeed = 0.25F;
 		getNavigator().setBreakDoors(true);
 		getNavigator().setAvoidsWater(true);
@@ -60,10 +68,51 @@ public class EntityWalkingDead extends EntityMob {
 		tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		tasks.addTask(7, new EntityAILookIdle(this));
 		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 16.0F, 0, true));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, 16.0F, 0, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, 16.0F, 0, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, 16.0F, 0, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, attackDistance, 0, true));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, attackDistance, 0, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 0, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 0, false));
+	}
+	
+	public boolean getHasTarget() {
+		return isAttackableEntity(this, attackDistance);
+	}
+	
+	public boolean isAttackableEntity(EntityLiving entityLiving, double distance) {
+        List list = worldObj.selectEntitiesWithinAABB(EntityLiving.class, boundingBox.expand(distance, 4.0D, distance), (IEntitySelector)null);
+
+        Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+        	Entity entity = (Entity) iter.next();
+        	EntityLiving target = (EntityLiving)entity;
+        	if (isGoodTarget(target)) {
+        		double dist = target.getDistanceSq(entityLiving.posX, entityLiving.posY, entityLiving.posZ);
+        		if (dist < distance * distance) {
+        			return true;
+        		}
+        	}
+        }
+
+        return false;
+	}
+	
+	public boolean isGoodTarget(EntityLiving target) {
+		if (target == null) {
+            return false;
+        } else if (target == this) {
+            return false;
+        } else if (!target.isEntityAlive()) {
+            return false;
+        } else {
+        	boolean targetEntity = ((target instanceof EntityPlayer) || (target instanceof EntityVillager)
+            		|| (target instanceof EntityChicken) || (target instanceof EntityPig));
+        	
+        	if (targetEntity && canEntityBeSeen(target)) {
+            	return true;
+            }
+        }
+		
+		return false;
 	}
 
 	public void onLivingUpdate() {
@@ -108,9 +157,9 @@ public class EntityWalkingDead extends EntityMob {
 		// spawns on grass, sand and very occasionally spawn on stone
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
-//		boolean isStone = (rand.nextInt(32) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
+		boolean isStone = (rand.nextInt(32) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
 		
-        return (isGrass || isSand/* || isStone*/) && isClear && notColliding && !isLiquid;
+        return (isGrass || isSand || isStone) && isClear && notColliding && !isLiquid;
     }
 	
 	public float getSpeedModifier() {
@@ -126,7 +175,7 @@ public class EntityWalkingDead extends EntityMob {
 
 	@SideOnly(Side.CLIENT)
 	public String getTexture() {
-		return isVillager() ? "/skins/zombie_villager.png" : texture;
+		return isVillager() ? villager_texture : texture;
 	}
 
 	public int getMaxHealth() {
@@ -185,6 +234,7 @@ public class EntityWalkingDead extends EntityMob {
 	public void onStruckByLightning(EntityLightningBolt entityLightningBolt) {
 		// A little surprise... BOOM!
 		worldObj.createExplosion(this, posX, posY, posZ, 1.0F, true);
+		setDead();
 	}
 
 	public int getAttackStrength(Entity entity) {
@@ -225,11 +275,11 @@ public class EntityWalkingDead extends EntityMob {
 	
 //	@Override
 //	public void onDeath(DamageSource damageSource) {
-//		dropEquipment();
+//		dropArmor();
 //		super.onDeath(damageSource);
 //	}
-	
-//	protected void dropEquipment() {
+//	
+//	protected void dropArmor() {
 //		for (int k = 0; k < getLastActiveItems().length; ++k) {
 //			ItemStack armor = getCurrentItemOrArmor(k);
 //			if (armor != null) {
@@ -276,15 +326,6 @@ public class EntityWalkingDead extends EntityMob {
 			default:
 				return;
 			}
-//			if (rand.nextInt(5) == 0) {
-//				setCurrentItemOrArmor(0, new ItemStack(Item.swordDiamond));
-//			} else if (rand.nextInt(4) == 0){
-//				setCurrentItemOrArmor(0, new ItemStack(Item.swordSteel));
-//			} else if (rand.nextInt(3) == 0){
-//				setCurrentItemOrArmor(0, new ItemStack(Item.shovelDiamond));
-//			} else {
-//				setCurrentItemOrArmor(0, new ItemStack(Item.shovelSteel));
-//			}
 		}
 	}
 

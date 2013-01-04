@@ -92,7 +92,6 @@ public class EntityWalkingDead extends EntityMob {
         		}
         	}
         }
-
         return false;
 	}
 	
@@ -104,10 +103,17 @@ public class EntityWalkingDead extends EntityMob {
         } else if (!target.isEntityAlive()) {
             return false;
         } else {
-        	boolean targetEntity = ((target instanceof EntityPlayer) || (target instanceof EntityVillager)
-            		|| (target instanceof EntityChicken) || (target instanceof EntityPig));
+        	boolean player = (target instanceof EntityPlayer);
+        	boolean villager = (target instanceof EntityVillager);
+        	boolean chicken = (target instanceof EntityChicken);
+        	boolean pig = (target instanceof EntityPig);
         	
-        	if (targetEntity && canEntityBeSeen(target)) {
+        	if (player) {
+        		if (((EntityPlayer)target).capabilities.isCreativeMode) {
+        			return false;
+        		}
+        	}
+        	if ((player || villager || chicken || pig) && canEntityBeSeen(target)) {
             	return true;
             }
         }
@@ -235,6 +241,7 @@ public class EntityWalkingDead extends EntityMob {
 		// A little surprise... BOOM!
 		worldObj.createExplosion(this, posX, posY, posZ, 1.0F, true);
 		setDead();
+		System.out.println("*** A walker was struck by lightning. And it exploded!");
 	}
 
 	public int getAttackStrength(Entity entity) {
@@ -273,21 +280,6 @@ public class EntityWalkingDead extends EntityMob {
 		}
 	}
 	
-//	@Override
-//	public void onDeath(DamageSource damageSource) {
-//		dropArmor();
-//		super.onDeath(damageSource);
-//	}
-//	
-//	protected void dropArmor() {
-//		for (int k = 0; k < getLastActiveItems().length; ++k) {
-//			ItemStack armor = getCurrentItemOrArmor(k);
-//			if (armor != null) {
-//				entityDropItem(armor, 0.0F);
-//			}
-//		}
-//	}
-
 	public EnumCreatureAttribute getCreatureAttribute() {
 		return EnumCreatureAttribute.UNDEAD;
 	}

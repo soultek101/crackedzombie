@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityEggInfo;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.EnumHelper;
@@ -14,6 +16,7 @@ import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenEnd;
 import net.minecraft.world.biome.BiomeGenHell;
@@ -120,7 +123,9 @@ public class WalkingDead {
 	@Init
 	public void load(FMLInitializationEvent evt) {
 		int id = EntityRegistry.findGlobalUniqueEntityId();
-		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id, 0x00AFAF, 0x799C45);
+		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id);
+		EntityRegistry.registerModEntity(EntityWalkingDead.class, "WalkingDead", id, this, 80, 3, true);
+		EntityList.entityEggs.put(Integer.valueOf(id), new EntityEggInfo(id, 0x00AFAF, 0x799C45));
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
 		
 		// placing this function here may allow the walkers to spawn in biomes
@@ -154,6 +159,7 @@ public class WalkingDead {
 			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
 			System.out.println("*** Removing slime spawns");
 		}
+		
 	}
 	
 	// This function should get all biomes that are derived from BiomeGenBase,

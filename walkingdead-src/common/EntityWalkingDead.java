@@ -37,6 +37,8 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
@@ -239,11 +241,11 @@ public class EntityWalkingDead extends EntityMob {
 	@Override
 	public void onStruckByLightning(EntityLightningBolt entityLightningBolt) {
 		// A little surprise... BOOM!
-		worldObj.createExplosion(this, posX, posY, posZ, 1.0F, true);
+		worldObj.newExplosion(this, posX, posY, posZ, 0.5F, true, true);
 		setDead();
-		System.out.println("*** A walker was struck by lightning. And it exploded!");
+//		System.out.println("*** A walker was struck by lightning. And it exploded!");
 	}
-
+	
 	public int getAttackStrength(Entity entity) {
 		ItemStack itemstack = getHeldItem();
 		int strength = 4;

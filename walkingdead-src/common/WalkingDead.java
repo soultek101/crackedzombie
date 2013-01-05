@@ -141,6 +141,7 @@ public class WalkingDead {
 		
 		// placing this function here may allow the walkers to spawn in biomes
 		// created by other mods provided those mods are loaded before this one.
+		logger.info("*** Scanning for available biomes");
 		BiomeGenBase[] biomes = getBiomeList();
 		
 		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
@@ -187,6 +188,7 @@ public class WalkingDead {
 				continue;
 			}
 			if (!(biomegenbase instanceof BiomeGenHell) && !(biomegenbase instanceof BiomeGenEnd)) {
+				logger.info(" >>> Adding " + biomegenbase.biomeName + " for spawning");
 				linkedlist.add(biomegenbase);
 			}
 		}

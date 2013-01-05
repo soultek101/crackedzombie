@@ -60,7 +60,7 @@ public final class SpawnerWalkingDead {
         
         int eligibleChunks = 0;
         ChunkCoordinates spawnPoint = worldServer.getSpawnPoint();
-        EnumCreatureType creatureType = EnumCreatureType.monster;//(EnumCreatureType)WalkingDead.walkerType;
+        EnumCreatureType creatureType = EnumCreatureType.monster;
 		final int walkerSpawns = WalkingDead.instance.getWalkerSpawns();
 
         if (worldServer.countEntities(EntityWalkingDead.class) < walkerSpawns) {

@@ -3,13 +3,19 @@ package walkingdead.common;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import reptiles.common.Reptiles;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraftforge.client.EnumHelperClient;
+import net.minecraftforge.common.ChestGenHooks;
+import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.EnumHelper;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -17,10 +23,14 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenEnd;
 import net.minecraft.world.biome.BiomeGenHell;
 import net.minecraftforge.common.Configuration;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -66,19 +76,20 @@ public class WalkingDead {
 	private boolean spawnSpiders;
 	private boolean spawnSlime;
 	
+	private Logger logger;
+	
 	@SidedProxy(
 		clientSide = "walkingdead.client.ClientProxyWalkingDead",
 		serverSide = "walkingdead.common.CommonProxyWalkingDead"
 	)
 	
 	public static CommonProxyWalkingDead proxy;
-//	public static EnumCreatureType walkerType = EnumHelper.addCreatureType("walker", EntityWalkingDead.class, 50, Material.air, false);
-	
-//	public WalkingDead() {
-//	}
 	
 	@PreInit
 	public void preLoad(FMLPreInitializationEvent event) {
+		logger = Logger.getLogger(WalkingDead.modid);
+		logger.setParent(FMLLog.getLogger());
+		
 		String generalComments = WalkingDead.name + " Config\nMichael Sheppard (crackedEgg)\n";
 		String spawnProbComment = "walkerSpawnProb adjust to probability of walkers spawning,\n"
 						+ "although the custom spawning most likely overrides this. the higher the\n"
@@ -130,41 +141,46 @@ public class WalkingDead {
 		
 		// placing this function here may allow the walkers to spawn in biomes
 		// created by other mods provided those mods are loaded before this one.
-		BiomeGenBase[] biomes = getVanillaBiomes();
+		BiomeGenBase[] biomes = getBiomeList();
 		
-		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, /*walkerType*/EnumCreatureType.monster, biomes);
+		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
+		
+		// walkers should spawn in dungeon spawners
+		DungeonHooks.addDungeonMob("WalkingDead", 200);
+		// add steel swords to the loot. you may need these.
+		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Item.swordSteel), 1, 1, 4));
 		
 		// optionally remove creeper, skeleton, and zombie spawns for these biomes
 		if (!spawnCreepers) {
 			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
-			System.out.println("*** Removing creeper spawns");
+			logger.info("*** Removing creeper spawns");
 		}
 		if (!spawnSkeletons) {
 			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
-			System.out.println("*** Removing skeleton spawns");
+			logger.info("*** Removing skeleton spawns");
 		}
 		if (!spawnZombies) {
 			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
-			System.out.println("*** Removing zombie spawns");
+			logger.info("*** Removing zombie spawns");
 		}
 		if (!spawnEnderman) {
 			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
-			System.out.println("*** Removing enderman spawns");
+			logger.info("*** Removing enderman spawns");
 		}
 		if (!spawnSpiders) {
 			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, biomes);
-			System.out.println("*** Removing spider spawns");
+			logger.info("*** Removing spider spawns");
 		}
 		if (!spawnSlime) {
 			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
-			System.out.println("*** Removing slime spawns");
+			logger.info("*** Removing slime spawns");
 		}
 		
 	}
 	
 	// This function should get all biomes that are derived from BiomeGenBase,
 	// even those from other mods.
-	public BiomeGenBase[] getVanillaBiomes() {
+	public BiomeGenBase[] getBiomeList() {
 		LinkedList linkedlist = new LinkedList();
 		for (BiomeGenBase biomegenbase : BiomeGenBase.biomeList) {
 			if (biomegenbase == null) {

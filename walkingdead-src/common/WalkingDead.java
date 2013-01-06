@@ -35,6 +35,7 @@ import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenEnd;
 import net.minecraft.world.biome.BiomeGenHell;
+import net.minecraft.world.biome.BiomeGenOcean;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
@@ -193,7 +194,8 @@ public class WalkingDead {
 			if (biomegenbase == null) {
 				continue;
 			}
-			if (!(biomegenbase instanceof BiomeGenHell) && !(biomegenbase instanceof BiomeGenEnd)) {
+			// exclude nether, end, and ocean biomes
+			if (!(biomegenbase instanceof BiomeGenHell) && !(biomegenbase instanceof BiomeGenEnd) && !(biomegenbase instanceof BiomeGenOcean)) {
 				logger.info(" >>> Adding " + biomegenbase.biomeName + " for spawning");
 				linkedlist.add(biomegenbase);
 			}

@@ -2,8 +2,8 @@
 
 echo "== Creating jars =="
 
-KEYPASS=ds1b8zs
-STOREPASS=ds1b8zs
+KEYPASS=
+STOREPASS=
 
 MCVERSION=1.4.6
 FORGEVERSION=471

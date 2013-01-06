@@ -48,10 +48,6 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
-/**
- * @author mike
- *
- */
 public class EntityWalkingDead extends EntityMob {
 	
 	private int conversionTime = 0;

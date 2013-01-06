@@ -60,7 +60,7 @@ public class EntityWalkingDead extends EntityMob {
 		// random texture: number of walker textures
 		texture = "/skins/walker" + rand.nextInt(6) + ".png";
 		villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png";
-		moveSpeed = 0.25F;
+		moveSpeed = 0.28F;
 		getNavigator().setBreakDoors(true);
 		getNavigator().setAvoidsWater(true);
 		tasks.addTask(0, new EntityAISwimming(this));
@@ -72,7 +72,7 @@ public class EntityWalkingDead extends EntityMob {
 		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPig.class, moveSpeed, false));
 		tasks.addTask(4, new EntityAIMoveTwardsRestriction(this, moveSpeed));
 		tasks.addTask(5, new EntityAIMoveThroughVillage(this, moveSpeed, false));
-		tasks.addTask(6, new EntityAIMigrate(this, moveSpeed - 0.05F));
+		tasks.addTask(6, new EntityAIMigrate(this, moveSpeed - (moveSpeed - 0.20F)));
 		tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		tasks.addTask(7, new EntityAILookIdle(this));
 		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));

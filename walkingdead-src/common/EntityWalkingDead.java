@@ -78,10 +78,12 @@ public class EntityWalkingDead extends EntityMob {
 		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, attackDistance, 0, true));
 		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, attackDistance, 0, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 0, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 0, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 3, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 3, false));
 	}
 	
+	// used in model rendering, arms hang down when wandering about
+	// arms go up when attacking another entity, i.e., has a target.
 	public boolean getHasTarget() {
 		return isAttackableEntity(this, attackDistance);
 	}
@@ -126,6 +128,20 @@ public class EntityWalkingDead extends EntityMob {
             }
         }
 		
+		return false;
+	}
+	
+	public boolean attackEntityFrom(DamageSource damageSource, int damage) {
+		if (isEntityInvulnerable()) {
+            return false;
+        } else if (super.attackEntityFrom(damageSource, damage)) {
+        	if (damageSource.isProjectile()) {
+        		// apply random damage multiplier to arrows (range 1 - 3)
+        		damage *= (rand.nextInt(3) + 1);
+        		damageEntity(damageSource, damage);
+        		return true;
+        	}
+        }
 		return false;
 	}
 

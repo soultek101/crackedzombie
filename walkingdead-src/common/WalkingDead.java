@@ -6,10 +6,14 @@
 
 package walkingdead.common;
 
+//import java.nio.sIntBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import reptiles.common.Reptiles;
 
@@ -142,7 +146,7 @@ public class WalkingDead {
 	public void load(FMLInitializationEvent evt) {
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id);
-		EntityRegistry.registerModEntity(EntityWalkingDead.class, "WalkingDead", id, this, 80, 3, true);
+//		EntityRegistry.registerModEntity(EntityWalkingDead.class, "WalkingDead", id, this, 80, 3, true);
 		EntityList.entityEggs.put(Integer.valueOf(id), new EntityEggInfo(id, 0x00AFAF, 0x799C45));
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
 		

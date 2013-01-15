@@ -59,7 +59,7 @@ public class EntityWalkingDead extends EntityMob {
 
 		// random texture: number of walker textures
 		texture = "/skins/walker" + rand.nextInt(6) + ".png";
-		villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png";
+		villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png"; //"zombie_villager.png";
 		moveSpeed = 0.28F;
 		getNavigator().setBreakDoors(true);
 		getNavigator().setAvoidsWater(true);
@@ -264,8 +264,8 @@ public class EntityWalkingDead extends EntityMob {
 	public void onStruckByLightning(EntityLightningBolt entityLightningBolt) {
 		// A little surprise... BOOM!
 		worldObj.newExplosion(this, posX, posY, posZ, 0.5F, true, true);
-		setDead();
-//		System.out.println("*** A walker was struck by lightning. And it exploded!");
+		dealFireDamage(5);
+        setFire(8);
 	}
 	
 	public int getAttackStrength(Entity entity) {

@@ -44,7 +44,7 @@ public final class SpawnerWalkingDead {
 		return new ChunkPosition(newX, newY, newZ);
 	}
 	
-	public static final int findChunksForSpawning(WorldServer worldServer) {
+	public static final int SpawnWalkers(WorldServer worldServer) {
 		eligibleChunksForSpawning.clear();
 
         for (int entities = 0; entities < worldServer.playerEntities.size(); ++entities) {

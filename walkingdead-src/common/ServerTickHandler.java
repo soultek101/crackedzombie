@@ -33,7 +33,7 @@ public class ServerTickHandler implements ITickHandler {
 			WorldServer world = (WorldServer)tickData[0];
 			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
 				if (world.rand.nextBoolean()) {
-					SpawnerWalkingDead.findChunksForSpawning(world);
+					SpawnerWalkingDead.SpawnWalkers(world);
 				}
 			}
 		}

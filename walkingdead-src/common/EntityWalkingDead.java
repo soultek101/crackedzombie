@@ -59,7 +59,7 @@ public class EntityWalkingDead extends EntityMob {
 
 		// random texture: number of walker textures
 		texture = "/skins/walker" + rand.nextInt(6) + ".png";
-		villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png"; //"zombie_villager.png";
+		villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png";
 		moveSpeed = 0.28F;
 		getNavigator().setBreakDoors(true);
 		getNavigator().setAvoidsWater(true);
@@ -78,8 +78,8 @@ public class EntityWalkingDead extends EntityMob {
 		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, attackDistance, 0, true));
 		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, attackDistance, 0, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 3, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 3, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 8, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 8, false));
 	}
 	
 	// used in model rendering, arms hang down when wandering about
@@ -187,7 +187,7 @@ public class EntityWalkingDead extends EntityMob {
 		// spawns on grass, sand and very occasionally spawn on stone
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
-		boolean isStone = (rand.nextInt(32) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
+		boolean isStone = (rand.nextInt(16) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
 		
         return (isGrass || isSand || isStone) && isClear && notColliding && !isLiquid;
     }
@@ -296,6 +296,7 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	protected int getDropItemId() {
+		// returns the held item or armor
 		ItemStack heldItem = getHeldItem();
 		if (heldItem != null) {
 			return heldItem.itemID;
@@ -320,7 +321,7 @@ public class EntityWalkingDead extends EntityMob {
 			dropItem(Item.potato.itemID, 1);
 		}
 	}
-
+	
 	protected void SetHeldItem() {
 		super.func_82164_bB();
 
@@ -385,7 +386,7 @@ public class EntityWalkingDead extends EntityMob {
 
 			EntityWalkingDead walker = new EntityWalkingDead(worldObj);
 			walker.func_82149_j(entityLiving);
-			worldObj.setEntityDead(entityLiving);
+			worldObj.removeEntity(entityLiving);
 			walker.initCreature();
 			walker.setIsVillager(true);
 
@@ -462,7 +463,7 @@ public class EntityWalkingDead extends EntityMob {
 			villager.setGrowingAge(-24000);
 		}
 
-		worldObj.setEntityDead(this);
+		worldObj.removeEntity(this);
 		worldObj.spawnEntityInWorld(villager);
 		villager.addPotionEffect(new PotionEffect(Potion.confusion.id, 200, 0));
 		worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1017, (int) posX, (int) posY, (int) posZ, 0);

@@ -56,10 +56,17 @@ public class EntityWalkingDead extends EntityMob {
 
 	public EntityWalkingDead(World world) {
 		super(world);
-
+		
 		// random texture: number of walker textures
-		texture = "/skins/walker" + rand.nextInt(6) + ".png";
-		villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png"; //"zombie_villager.png";
+		boolean randomSkins = WalkingDead.instance.getRandomSkins();
+		if (randomSkins) { // use the internal skins
+			texture = "/skins/walker" + rand.nextInt(6) + ".png";
+			villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png";
+		} else { // use the texture pack skins 
+			texture = "/mob/zombie.png";
+			villager_texture = "/mob/zombie_villager.png";
+		}
+		
 		moveSpeed = 0.28F;
 		getNavigator().setBreakDoors(true);
 		getNavigator().setAvoidsWater(true);
@@ -181,7 +188,7 @@ public class EntityWalkingDead extends EntityMob {
 		int y = MathHelper.floor_double(boundingBox.minY);
 		int z = MathHelper.floor_double(posZ);
         
-		boolean isClear = worldObj.checkIfAABBIsClear(boundingBox);
+//		boolean isClear = worldObj.checkIfAABBIsClear(boundingBox);
 		boolean notColliding = worldObj.getCollidingBoundingBoxes(this, boundingBox).isEmpty();
 		boolean isLiquid = worldObj.isAnyLiquid(boundingBox);
 		// spawns on grass, sand and very occasionally spawn on stone
@@ -189,7 +196,7 @@ public class EntityWalkingDead extends EntityMob {
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
 		boolean isStone = (rand.nextInt(32) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
 		
-        return (isGrass || isSand || isStone) && isClear && notColliding && !isLiquid;
+        return (isGrass || isSand || isStone) /*&& isClear*/ && notColliding && !isLiquid;
     }
 	
 	public float getSpeedModifier() {
@@ -322,7 +329,7 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	protected void SetHeldItem() {
-		super.func_82164_bB();
+		super.func_82162_bC();
 
 		int maxInt = worldObj.difficultySetting > 1 ? 16 : 32;
 		if (rand.nextInt(maxInt) == 0) {
@@ -331,13 +338,13 @@ public class EntityWalkingDead extends EntityMob {
 				setCurrentItemOrArmor(0, new ItemStack(Item.swordDiamond));
 				break;
 			case 1:
-				setCurrentItemOrArmor(0, new ItemStack(Item.swordSteel));
+				setCurrentItemOrArmor(0, new ItemStack(Item.swordIron));
 				break;
 			case 2:
 				setCurrentItemOrArmor(0, new ItemStack(Item.shovelDiamond));
 				break;
 			case 3:
-				setCurrentItemOrArmor(0, new ItemStack(Item.shovelSteel));
+				setCurrentItemOrArmor(0, new ItemStack(Item.shovelIron));
 				break;
 			default:
 				return;
@@ -385,7 +392,7 @@ public class EntityWalkingDead extends EntityMob {
 
 			EntityWalkingDead walker = new EntityWalkingDead(worldObj);
 			walker.func_82149_j(entityLiving);
-			worldObj.setEntityDead(entityLiving);
+			worldObj.removeEntity(entityLiving);
 			walker.initCreature();
 			walker.setIsVillager(true);
 
@@ -399,7 +406,7 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	public void initCreature() {
-		canPickUpLoot = rand.nextFloat() < pickUpLootProability[worldObj.difficultySetting];
+//		canPickUpLoot = rand.nextFloat() < pickUpLootProability[worldObj.difficultySetting];
 
 		if (worldObj.rand.nextFloat() < 0.05F) {
 			setIsVillager(true);
@@ -462,7 +469,7 @@ public class EntityWalkingDead extends EntityMob {
 			villager.setGrowingAge(-24000);
 		}
 
-		worldObj.setEntityDead(this);
+		worldObj.removeEntity(this);
 		worldObj.spawnEntityInWorld(villager);
 		villager.addPotionEffect(new PotionEffect(Potion.confusion.id, 200, 0));
 		worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1017, (int) posX, (int) posY, (int) posZ, 0);

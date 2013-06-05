@@ -62,7 +62,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @NetworkMod (
 	clientSideRequired = true,
 	serverSideRequired = false,
-	versionBounds = "[1.4.7]"
+	versionBounds = "[1.5.1]"
 )
 
 public class WalkingDead {
@@ -74,7 +74,7 @@ public class WalkingDead {
 	@Instance
 	public static WalkingDead instance;
 	
-	public static final String version = "1.4.7";
+	public static final String version = "1.5.1";
 	public static final String modid = "WalkingDeadMod";
 	public static final String name = "WalkingDead Mod";
 	
@@ -86,6 +86,7 @@ public class WalkingDead {
 	private boolean spawnEnderman;
 	private boolean spawnSpiders;
 	private boolean spawnSlime;
+	private boolean randomSkins;
 	
 	private Logger logger;
 	
@@ -121,6 +122,8 @@ public class WalkingDead {
 						+ "if you want to spawn spiders";
 		String slimeComment = "slimeSpawns, set to false to disable slime spawning, set to true\n"
 				+ "if you want to spawn slimes";
+		String randomSkinsComment = "randomSkins, set to true to use the internal random skins in the mod\n"
+				+ "jar. Set to false to use your texture pack random mobs.";
 		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -133,6 +136,7 @@ public class WalkingDead {
 		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
 		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(false);
 		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
+		randomSkins = config.get(Configuration.CATEGORY_GENERAL, "randomSkins", false, randomSkinsComment).getBoolean(false);
 		
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
 		
@@ -160,7 +164,7 @@ public class WalkingDead {
 		// walkers should spawn in dungeon spawners
 		DungeonHooks.addDungeonMob("WalkingDead", 200);
 		// add steel swords to the loot. you may need these.
-		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Item.swordSteel), 1, 1, 4));
+		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Item.swordIron), 1, 1, 4));
 		
 		// optionally remove creeper, skeleton, and zombie spawns for these biomes
 		if (!spawnCreepers) {
@@ -209,6 +213,10 @@ public class WalkingDead {
 	
 	public int getWalkerSpawns() {
 		return walkerSpawns;
+	}
+	
+	public boolean getRandomSkins() {
+		return randomSkins;
 	}
 	
 }

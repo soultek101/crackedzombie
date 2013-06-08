@@ -68,10 +68,12 @@ public class EntityWalkingDead extends EntityMob {
 		}
 		
 		moveSpeed = 0.28F;
-		getNavigator().setBreakDoors(true);
 		getNavigator().setAvoidsWater(true);
 		tasks.addTask(0, new EntityAISwimming(this));
-		tasks.addTask(1, new EntityAIBreakDoor(this));
+		if (WalkingDead.instance.getDoorBusting()) { // include the break door AI
+			getNavigator().setBreakDoors(true);
+			tasks.addTask(1, new EntityAIBreakDoor(this));
+		}
 		tasks.addTask(2, new EntityAILeapAtTarget(this, moveSpeed + 0.01F));
 		tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, moveSpeed, false));
 		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityVillager.class, moveSpeed, true));
@@ -85,8 +87,8 @@ public class EntityWalkingDead extends EntityMob {
 		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, attackDistance, 0, true));
 		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, attackDistance, 0, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 3, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 3, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 8, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 8, false));
 	}
 	
 	// used in model rendering, arms hang down when wandering about
@@ -194,13 +196,13 @@ public class EntityWalkingDead extends EntityMob {
 		// spawns on grass, sand and very occasionally spawn on stone
 		boolean isGrass = worldObj.getBlockId(x, y - 1, z) == Block.grass.blockID;
 		boolean isSand = worldObj.getBlockId(x, y - 1, z) == Block.sand.blockID;
-		boolean isStone = (rand.nextInt(32) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
+		boolean isStone = (rand.nextInt(16) == 0) && (worldObj.getBlockId(x, y - 1, z) == Block.stone.blockID);
 		
         return (isGrass || isSand || isStone) /*&& isClear*/ && notColliding && !isLiquid;
     }
 	
 	public float getSpeedModifier() {
-		return super.getSpeedModifier() * (isChild() ? 1.5F : 1.0F);
+		return super.getSpeedModifier() * (isChild() ? 1.2F : 1.0F);
 	}
 
 	protected void entityInit() {
@@ -303,6 +305,7 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	protected int getDropItemId() {
+		// returns the held item or armor
 		ItemStack heldItem = getHeldItem();
 		if (heldItem != null) {
 			return heldItem.itemID;
@@ -327,7 +330,7 @@ public class EntityWalkingDead extends EntityMob {
 			dropItem(Item.potato.itemID, 1);
 		}
 	}
-
+	
 	protected void SetHeldItem() {
 		super.func_82162_bC();
 
@@ -407,9 +410,11 @@ public class EntityWalkingDead extends EntityMob {
 
 	public void initCreature() {
 //		canPickUpLoot = rand.nextFloat() < pickUpLootProability[worldObj.difficultySetting];
-
-		if (worldObj.rand.nextFloat() < 0.05F) {
+		float nf = worldObj.rand.nextFloat();
+		if (nf < 0.05F) {
 			setIsVillager(true);
+		} else if (nf >= 0.05 && nf <= 0.08) {
+			setChild(true);
 		}
 
 		SetHeldItem();

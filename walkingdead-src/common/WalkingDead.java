@@ -62,7 +62,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @NetworkMod (
 	clientSideRequired = true,
 	serverSideRequired = false,
-	versionBounds = "[1.5.1]"
+	versionBounds = "[1.5.2]"
 )
 
 public class WalkingDead {
@@ -74,7 +74,7 @@ public class WalkingDead {
 	@Instance
 	public static WalkingDead instance;
 	
-	public static final String version = "1.5.1";
+	public static final String version = "1.5.2";
 	public static final String modid = "WalkingDeadMod";
 	public static final String name = "WalkingDead Mod";
 	
@@ -87,6 +87,7 @@ public class WalkingDead {
 	private boolean spawnSpiders;
 	private boolean spawnSlime;
 	private boolean randomSkins;
+	private boolean doorBusting;
 	
 	private Logger logger;
 	
@@ -124,6 +125,8 @@ public class WalkingDead {
 				+ "if you want to spawn slimes";
 		String randomSkinsComment = "randomSkins, set to true to use the internal random skins in the mod\n"
 				+ "jar. Set to false to use your texture pack random mobs.";
+		String doorBustingComment = "doorBusting, set to true to have walkers try to break down doors,\n"
+				+ "otherwise set to false. It's quieter.";
 		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -137,6 +140,7 @@ public class WalkingDead {
 		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(false);
 		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
 		randomSkins = config.get(Configuration.CATEGORY_GENERAL, "randomSkins", false, randomSkinsComment).getBoolean(false);
+		doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
 		
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
 		
@@ -217,6 +221,10 @@ public class WalkingDead {
 	
 	public boolean getRandomSkins() {
 		return randomSkins;
+	}
+	
+	public boolean getDoorBusting() {
+		return doorBusting;
 	}
 	
 }

@@ -1,12 +1,23 @@
-//
-// This work is licensed under the Creative Commons
-// Attribution-ShareAlike 3.0 Unported License. To view a copy of this
-// license, visit http://creativecommons.org/licenses/by-sa/3.0/
+//  
+//  =====GPL=============================================================
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; version 2 dated June, 1991.
+// 
+//  This program is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+// 
+//  You should have received a copy of the GNU General Public License
+//  along with this program;  if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
+//  =====================================================================
 //
 
-// This work is licensed under the Creative Commons
-// Attribution-ShareAlike 3.0 Unported License. To view a copy of this
-// license, visit http://creativecommons.org/licenses/by-sa/3.0/
+//
+//
+
 package walkingdead.common;
 
 import java.util.ArrayList;
@@ -19,7 +30,8 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EntityLivingData;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
@@ -30,7 +42,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
-//import net.minecraftforge.event.entity.living.LivingSpecialSpawnEvent;
 
 public final class SpawnerWalkingDead {
 	private static HashMap eligibleChunksForSpawning = new HashMap();
@@ -96,6 +107,7 @@ public final class SpawnerWalkingDead {
 	                        int newZ = chunkPos.z;
 	                        final byte chunkRange = 6;
 	                        int spawnAttempts = 0;
+	                        EntityLivingData entityLivingData = null;
 	
 	                        while (true) {
 	                            if (spawnAttempts < 4) {
@@ -121,7 +133,7 @@ public final class SpawnerWalkingDead {
 	                                            if (walker.getCanSpawnHere() && nSpawned < walker.getMaxSpawnedInChunk()) {
 	                                                ++nSpawned;
 	                                                worldServer.spawnEntityInWorld(walker);
-	                                                walker.initCreature();
+	                                                entityLivingData = walker.func_110161_a(entityLivingData);
 //                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + " (" + nSpawned + ")");
 	                                            }
 	                                            eligibleChunks += nSpawned;
@@ -152,7 +164,7 @@ public final class SpawnerWalkingDead {
 		}
 	}
 	
-	// This function is from DrZharks Custom Mob Spawner. It has been modified to suit my needs.
+	// This function is derived from DrZharks Custom Mob Spawner. It has been modified to suit my needs.
 	// http://www.minecraftforum.net/topic/769339-10-custom-mob-spawner/
 	public static int despawnWalker(WorldServer worldObj, Class cls) {
     	int count = 0;
@@ -162,14 +174,14 @@ public final class SpawnerWalkingDead {
             if (!(entity instanceof EntityWalkingDead)) {
             	continue;
             }
-            count += entityDespawnCheck(worldObj, (EntityLiving)entity);
+            count += entityDespawnCheck(worldObj, (EntityLivingBase)entity);
         }
         return count;
     }
 	
-	// This function is from DrZharks Custom Mob Spawner. It has been modified to suit my needs.
+	// This function is derived from DrZharks Custom Mob Spawner. It has been modified to suit my needs.
 	// http://www.minecraftforum.net/topic/769339-10-custom-mob-spawner/
-	protected static int entityDespawnCheck(WorldServer worldObj, EntityLiving entity) {
+	protected static int entityDespawnCheck(WorldServer worldObj, EntityLivingBase entity) {
         EntityPlayer entityplayer = worldObj.getClosestPlayerToEntity(entity, -1D);
         if (entityplayer != null) {
             double deltaX = ((Entity) (entityplayer)).posX - entity.posX;

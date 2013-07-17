@@ -1,36 +1,62 @@
+//  
+//  =====GPL=============================================================
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; version 2 dated June, 1991.
+// 
+//  This program is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+// 
+//  You should have received a copy of the GNU General Public License
+//  along with this program;  if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
+//  =====================================================================
 //
-// This work is licensed under the Creative Commons
-// Attribution-ShareAlike 3.0 Unported License. To view a copy of this
-// license, visit http://creativecommons.org/licenses/by-sa/3.0/
+
+//
 //
 
 package walkingdead.common;
 
 
+import java.lang.reflect.Array;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
+import walkingdead.client.RenderWalkingDead;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EntityLivingData;
 import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.entity.ai.EntityAIMoveTwardsRestriction;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeInstance;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySheep;
@@ -48,48 +74,51 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
-public class EntityWalkingDead extends EntityMob {
+public class EntityWalkingDead extends EntityMob
+{
+	private static final UUID uuid = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
+	private static final AttributeModifier speedBoost = new AttributeModifier(uuid, "Baby speed boost", 0.1D, 0);
 	
 	private int conversionTime = 0;
 	private String villager_texture;
 	private final float attackDistance = 16.0F;
-
+	private int walkerSkinIndex;
+	private int villagerSkinIndex;
+	
 	public EntityWalkingDead(World world) {
 		super(world);
 		
-		// random texture: number of walker textures
-		boolean randomSkins = WalkingDead.instance.getRandomSkins();
-		if (randomSkins) { // use the internal skins
-			texture = "/skins/walker" + rand.nextInt(6) + ".png";
-			villager_texture = "/skins/walker_villager" + rand.nextInt(3) + ".png";
-		} else { // use the texture pack skins 
-			texture = "/mob/zombie.png";
-			villager_texture = "/mob/zombie_villager.png";
-		}
-		
-		moveSpeed = 0.28F;
 		getNavigator().setAvoidsWater(true);
 		tasks.addTask(0, new EntityAISwimming(this));
-		if (WalkingDead.instance.getDoorBusting()) { // include the break door AI
+		if (WalkingDead.instance.getDoorBusting()) { // include the door breaking AI
 			getNavigator().setBreakDoors(true);
 			tasks.addTask(1, new EntityAIBreakDoor(this));
 		}
-		tasks.addTask(2, new EntityAILeapAtTarget(this, moveSpeed + 0.01F));
-		tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, moveSpeed, false));
-		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityVillager.class, moveSpeed, true));
-		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityChicken.class, moveSpeed, false));
-		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPig.class, moveSpeed, false));
-		tasks.addTask(4, new EntityAIMoveTwardsRestriction(this, moveSpeed));
-		tasks.addTask(5, new EntityAIMoveThroughVillage(this, moveSpeed, false));
-		tasks.addTask(6, new EntityAIMigrate(this, moveSpeed - (moveSpeed - 0.20F)));
-		tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		tasks.addTask(7, new EntityAILookIdle(this));
+		tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
+		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0, false));
+		tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityVillager.class, 1.0, true));
+		tasks.addTask(5, new EntityAIAttackOnCollide(this, EntityChicken.class, 1.0, false));
+		tasks.addTask(6, new EntityAIAttackOnCollide(this, EntityPig.class, 1.0, false));
+//		tasks.addTask(7, new EntityAIMoveTowardsRestriction(this, 1.0D));
+//		tasks.addTask(8, new EntityAIMoveThroughVillage(this, 1.0, false));
+		tasks.addTask(7, new EntityAIMigrate(this, 0.8));
+		tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		tasks.addTask(8, new EntityAILookIdle(this));
 		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, attackDistance, 0, true));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, attackDistance, 0, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityChicken.class, attackDistance, 8, false));
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPig.class, attackDistance, 8, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityVillager.class, 0, false));
+		targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityChicken.class, 8, false));
+		targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPig.class, 8, false));
+		
+		rand = new Random(System.currentTimeMillis());
 	}
+	
+	protected void func_110147_ax() {
+        super.func_110147_ax();
+        func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(32.0); // follow range
+        func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.23); // movement speed
+        func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0);  // attack damage
+    }
 	
 	// used in model rendering, arms hang down when wandering about
 	// arms go up when attacking another entity, i.e., has a target.
@@ -97,13 +126,13 @@ public class EntityWalkingDead extends EntityMob {
 		return isAttackableEntity(this, attackDistance);
 	}
 	
-	public boolean isAttackableEntity(EntityLiving entityLiving, double distance) {
-        List list = worldObj.selectEntitiesWithinAABB(EntityLiving.class, boundingBox.expand(distance, 4.0D, distance), (IEntitySelector)null);
+	public boolean isAttackableEntity(EntityLivingBase entityLiving, double distance) {
+        List list = worldObj.selectEntitiesWithinAABB(EntityLivingBase.class, boundingBox.expand(distance, 4.0D, distance), (IEntitySelector)null);
 
         Iterator iter = list.iterator();
         while (iter.hasNext()) {
         	Entity entity = (Entity) iter.next();
-        	EntityLiving target = (EntityLiving)entity;
+        	EntityLivingBase target = (EntityLivingBase)entity;
         	if (isGoodTarget(target)) {
         		double dist = target.getDistanceSq(entityLiving.posX, entityLiving.posY, entityLiving.posZ);
         		if (dist < distance * distance) {
@@ -114,7 +143,7 @@ public class EntityWalkingDead extends EntityMob {
         return false;
 	}
 	
-	public boolean isGoodTarget(EntityLiving target) {
+	public boolean isGoodTarget(EntityLivingBase target) {
 		if (target == null) {
             return false;
         } else if (target == this) {
@@ -140,7 +169,12 @@ public class EntityWalkingDead extends EntityMob {
 		return false;
 	}
 	
-	public boolean attackEntityFrom(DamageSource damageSource, int damage) {
+	@Override
+	protected boolean isMovementCeased() {
+		return false;
+	}
+	
+	public boolean attackEntityFrom(DamageSource damageSource, float damage) {
 		if (isEntityInvulnerable()) {
             return false;
         } else if (super.attackEntityFrom(damageSource, damage)) {
@@ -201,20 +235,16 @@ public class EntityWalkingDead extends EntityMob {
         return (isGrass || isSand || isStone) /*&& isClear*/ && notColliding && !isLiquid;
     }
 	
-	public float getSpeedModifier() {
-		return super.getSpeedModifier() * (isChild() ? 1.2F : 1.0F);
-	}
-
 	protected void entityInit() {
 		super.entityInit();
 		getDataWatcher().addObject(12, Byte.valueOf((byte) 0));
 		getDataWatcher().addObject(13, Byte.valueOf((byte) 0));
 		getDataWatcher().addObject(14, Byte.valueOf((byte) 0));
-	}
-
-	@SideOnly(Side.CLIENT)
-	public String getTexture() {
-		return isVillager() ? villager_texture : texture;
+		
+		walkerSkinIndex = rand.nextInt(6);
+		villagerSkinIndex = rand.nextInt(3);
+		getDataWatcher().addObject(24, Byte.valueOf((byte) walkerSkinIndex));
+		getDataWatcher().addObject(25, Byte.valueOf((byte) villagerSkinIndex));
 	}
 
 	public int getMaxHealth() {
@@ -245,19 +275,29 @@ public class EntityWalkingDead extends EntityMob {
 	}
 
 	public void setChild(boolean unused) {
-		getDataWatcher().updateObject(12, Byte.valueOf((byte) 1));
+//		getDataWatcher().updateObject(12, Byte.valueOf((byte) 1));
+		getDataWatcher().updateObject(12, Byte.valueOf((byte)(unused ? 1 : 0)));
+
+        if (this.worldObj != null && !this.worldObj.isRemote) {
+            AttributeInstance attributeinstance = func_110148_a(SharedMonsterAttributes.field_111263_d);
+            attributeinstance.func_111124_b(speedBoost);
+
+            if (unused) {
+                attributeinstance.func_111121_a(speedBoost);
+            }
+        }
 	}
 
 	public boolean isVillager() {
 		return getDataWatcher().getWatchableObjectByte(13) == 1;
 	}
-
-	public void setIsVillager(boolean set) {
+	
+	public void setVillager(boolean set) {
 		getDataWatcher().updateObject(13, Byte.valueOf((byte) (set ? 1 : 0)));
 	}
-
+	
 	public void onUpdate() {
-		if (!worldObj.isRemote && getEnchantment()) {
+		if (!worldObj.isRemote && isConverting()) {
 			int boost = getConversionTimeBoost();
 			conversionTime -= boost;
 
@@ -282,7 +322,7 @@ public class EntityWalkingDead extends EntityMob {
 		int strength = 4;
 
 		if (itemstack != null) {
-			strength += itemstack.getDamageVsEntity(this);
+			strength += 2; // would be nice to add the held item's damage capability 
 		}
 
 		return strength;
@@ -331,13 +371,91 @@ public class EntityWalkingDead extends EntityMob {
 		}
 	}
 	
-	protected void SetHeldItem() {
-		super.func_82162_bC();
+//	protected void setHeldItem() {
+//		super.func_82162_bC();
+//
+//		int maxInt = worldObj.difficultySetting > 1 ? 16 : 32;
+//		if (rand.nextInt(maxInt) == 0) {
+//			switch (rand.nextInt(8)) {
+//			case 0:
+//				setCurrentItemOrArmor(0, new ItemStack(Item.swordDiamond));
+//				break;
+//			case 1:
+//				setCurrentItemOrArmor(0, new ItemStack(Item.swordIron));
+//				break;
+//			case 2:
+//				setCurrentItemOrArmor(0, new ItemStack(Item.shovelDiamond));
+//				break;
+//			case 3:
+//				setCurrentItemOrArmor(0, new ItemStack(Item.shovelIron));
+//				break;
+//			default:
+//				return;
+//			}
+//		}
+//	}
 
-		int maxInt = worldObj.difficultySetting > 1 ? 16 : 32;
-		if (rand.nextInt(maxInt) == 0) {
-			switch (rand.nextInt(8)) {
-			case 0:
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+
+		if (isChild()) {
+			nbt.setBoolean("IsBaby", true);
+		}
+
+		if (isVillager()) {
+			nbt.setBoolean("IsVillager", true);
+		}
+
+		nbt.setInteger("ConversionTime", isConverting() ? conversionTime : -1);
+		
+		nbt.setInteger("WalkerSkinIdx", getWalkerSkinIndex());
+		nbt.setInteger("VillagerSkinIdx", getVillagerSkinIndex());
+	}
+
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+
+		if (nbt.getBoolean("IsBaby")) {
+			setChild(true);
+		}
+
+		if (nbt.getBoolean("IsVillager")) {
+			setVillager(true);
+		}
+
+		if (nbt.hasKey("ConversionTime") && nbt.getInteger("ConversionTime") > -1) {
+			startConversion(nbt.getInteger("ConversionTime"));
+		}
+		
+		walkerSkinIndex = nbt.getInteger("WalkerSkinIdx");
+		villagerSkinIndex = nbt.getInteger("VillagererSkinIdx");
+	}
+	
+	public EntityLivingData func_110161_a(EntityLivingData entityLivingData)
+    {
+        entityLivingData = super.func_110161_a(entityLivingData);
+        float f = worldObj.func_110746_b(posX, posY, posZ);
+        setCanPickUpLoot(rand.nextFloat() < 0.55F * f);
+        
+        float nf = worldObj.rand.nextFloat();
+		if (nf < 0.05F) {
+			setVillager(true);
+		} else if (nf >= 0.05 && nf <= 0.08) {
+			setChild(true);
+		}
+
+        addRandomArmor();
+        enchantEquipment(); //func_82162_bC();
+        
+        return entityLivingData;
+    }
+	
+	protected void addRandomArmor() {
+        super.addRandomArmor();
+        
+        if (this.rand.nextFloat() < 0.05F) {
+            switch(rand.nextInt(6)) {
+	        case 0:
 				setCurrentItemOrArmor(0, new ItemStack(Item.swordDiamond));
 				break;
 			case 1:
@@ -352,40 +470,10 @@ public class EntityWalkingDead extends EntityMob {
 			default:
 				return;
 			}
-		}
-	}
+        }
+    }
 
-	public void writeEntityToNBT(NBTTagCompound nbt) {
-		super.writeEntityToNBT(nbt);
-
-		if (isChild()) {
-			nbt.setBoolean("IsBaby", true);
-		}
-
-		if (isVillager()) {
-			nbt.setBoolean("IsVillager", true);
-		}
-
-		nbt.setInteger("ConversionTime", getEnchantment() ? conversionTime : -1);
-	}
-
-	public void readEntityFromNBT(NBTTagCompound nbt) {
-		super.readEntityFromNBT(nbt);
-
-		if (nbt.getBoolean("IsBaby")) {
-			setChild(true);
-		}
-
-		if (nbt.getBoolean("IsVillager")) {
-			setIsVillager(true);
-		}
-
-		if (nbt.hasKey("ConversionTime") && nbt.getInteger("ConversionTime") > -1) {
-			startConversion(nbt.getInteger("ConversionTime"));
-		}
-	}
-
-	public void onKillEntity(EntityLiving entityLiving) {
+	public void onKillEntity(EntityLivingBase entityLiving) {
 		super.onKillEntity(entityLiving);
 
 		if (worldObj.difficultySetting >= 2 && entityLiving instanceof EntityVillager) {
@@ -394,10 +482,10 @@ public class EntityWalkingDead extends EntityMob {
 			}
 
 			EntityWalkingDead walker = new EntityWalkingDead(worldObj);
-			walker.func_82149_j(entityLiving);
+			walker.copyLocationAndAnglesFrom/*func_82149_j*/(entityLiving);
 			worldObj.removeEntity(entityLiving);
-			walker.initCreature();
-			walker.setIsVillager(true);
+			walker.func_110161_a((EntityLivingData)null);
+			walker.setVillager(true);
 
 			if (entityLiving.isChild()) {
 				walker.setChild(true);
@@ -407,20 +495,11 @@ public class EntityWalkingDead extends EntityMob {
 			worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1016, (int) posX, (int) posY, (int) posZ, 0);
 		}
 	}
-
-	public void initCreature() {
-//		canPickUpLoot = rand.nextFloat() < pickUpLootProability[worldObj.difficultySetting];
-		float nf = worldObj.rand.nextFloat();
-		if (nf < 0.05F) {
-			setIsVillager(true);
-		} else if (nf >= 0.05 && nf <= 0.08) {
-			setChild(true);
-		}
-
-		SetHeldItem();
-		func_82162_bC();
-	}
 	
+	public boolean isConverting() {
+        return this.getDataWatcher().getWatchableObjectByte(14) == 1;
+    }
+
 	public boolean interact(EntityPlayer entityPlayer) {
 		ItemStack equippedItem = entityPlayer.getCurrentEquippedItem();
 
@@ -460,14 +539,10 @@ public class EntityWalkingDead extends EntityMob {
 		}
 	}
 
-	public boolean getEnchantment() {
-		return getDataWatcher().getWatchableObjectByte(14) == 1;
-	}
-
 	protected void convertToVillager() {
 		EntityVillager villager = new EntityVillager(worldObj);
-		villager.func_82149_j(this);
-		villager.initCreature();
+		villager.copyLocationAndAnglesFrom/*func_82149_j*/(this);
+		villager.func_110161_a((EntityLivingData)null);
 		villager.func_82187_q();
 
 		if (isChild()) {
@@ -506,5 +581,18 @@ public class EntityWalkingDead extends EntityMob {
 
 		return boostTime;
 	}
+	
+	public int getWalkerSkinIndex() {
+		return getDataWatcher().getWatchableObjectByte(24);
+	}
+	
+	public int getVillagerSkinIndex() {
+		return getDataWatcher().getWatchableObjectByte(25);
+	}
+	
+	@SideOnly(Side.CLIENT)
+    public int getSkinIndex() {
+		return isVillager() ? villagerSkinIndex : walkerSkinIndex;
+    }
 
 }

@@ -1,7 +1,21 @@
+//  
+//  =====GPL=============================================================
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; version 2 dated June, 1991.
+// 
+//  This program is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+// 
+//  You should have received a copy of the GNU General Public License
+//  along with this program;  if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
+//  =====================================================================
 //
-// This work is licensed under the Creative Commons
-// Attribution-ShareAlike 3.0 Unported License. To view a copy of this
-// license, visit http://creativecommons.org/licenses/by-sa/3.0/
+
+//
 //
 
 package walkingdead.common;
@@ -17,16 +31,16 @@ public class EntityAIMigrate extends EntityAIBase {
     private double xPosition;
     private double yPosition;
     private double zPosition;
-    private float speed;
+    private double speed;
 
-    public EntityAIMigrate(EntityCreature entityCreature, float speed) {
-        this.entity = entityCreature;
+    public EntityAIMigrate(EntityCreature entityCreature, double speed) {
+        entity = entityCreature;
         this.speed = speed;
-        this.setMutexBits(1);
+        setMutexBits(1);
     }
 
     public boolean shouldExecute() {
-        if (this.entity.getAge() > 600) {
+        if (entity.getAge() > 600) {
             return false;
         } else {
             Vec3 vec = RandomPositionGenerator.findRandomTarget(this.entity, 16, 8);
@@ -34,20 +48,20 @@ public class EntityAIMigrate extends EntityAIBase {
             if (vec == null) {
                 return false;
             } else {
-                this.xPosition = vec.xCoord;
-                this.yPosition = vec.yCoord;
-                this.zPosition = vec.zCoord;
+                xPosition = vec.xCoord;
+                yPosition = vec.yCoord;
+                zPosition = vec.zCoord;
                 return true;
             }
         }
     }
 
     public boolean continueExecuting() {
-        return !this.entity.getNavigator().noPath();
+        return !entity.getNavigator().noPath();
     }
 
     public void startExecuting() {
-        this.entity.getNavigator().tryMoveToXYZ(this.xPosition, this.yPosition, this.zPosition, this.speed);
+        entity.getNavigator().tryMoveToXYZ(xPosition, yPosition, zPosition, speed);
     }
 
 }

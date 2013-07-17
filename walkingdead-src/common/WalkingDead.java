@@ -1,8 +1,20 @@
+//  
+//  =====GPL=============================================================
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; version 2 dated June, 1991.
+// 
+//  This program is distributed in the hope that it will be useful, 
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+// 
+//  You should have received a copy of the GNU General Public License
+//  along with this program;  if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
+//  =====================================================================
 //
-// This work is licensed under the Creative Commons
-// Attribution-ShareAlike 3.0 Unported License. To view a copy of this
-// license, visit http://creativecommons.org/licenses/by-sa/3.0/
-//
+
 
 package walkingdead.common;
 
@@ -14,8 +26,6 @@ import java.util.logging.Logger;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-
-import reptiles.common.Reptiles;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityEggInfo;
@@ -43,9 +53,8 @@ import net.minecraft.world.biome.BiomeGenOcean;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -62,7 +71,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @NetworkMod (
 	clientSideRequired = true,
 	serverSideRequired = false,
-	versionBounds = "[1.5.2]"
+	versionBounds = "[" + WalkingDead.version + "]"
 )
 
 public class WalkingDead {
@@ -74,7 +83,7 @@ public class WalkingDead {
 	@Instance
 	public static WalkingDead instance;
 	
-	public static final String version = "1.5.2";
+	public static final String version = "1.6.2";
 	public static final String modid = "WalkingDeadMod";
 	public static final String name = "WalkingDead Mod";
 	
@@ -98,7 +107,7 @@ public class WalkingDead {
 	
 	public static CommonProxyWalkingDead proxy;
 	
-	@PreInit
+	@EventHandler
 	public void preLoad(FMLPreInitializationEvent event) {
 		logger = Logger.getLogger(WalkingDead.modid);
 		logger.setParent(FMLLog.getLogger());
@@ -123,8 +132,8 @@ public class WalkingDead {
 						+ "if you want to spawn spiders";
 		String slimeComment = "slimeSpawns, set to false to disable slime spawning, set to true\n"
 				+ "if you want to spawn slimes";
-		String randomSkinsComment = "randomSkins, set to true to use the internal random skins in the mod\n"
-				+ "jar. Set to false to use your texture pack random mobs.";
+//		String randomSkinsComment = "randomSkins, set to true to use the internal random skins in the mod\n"
+//				+ "jar. Set to false to use your texture pack random mobs.";
 		String doorBustingComment = "doorBusting, set to true to have walkers try to break down doors,\n"
 				+ "otherwise set to false. It's quieter.";
 		
@@ -139,7 +148,7 @@ public class WalkingDead {
 		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
 		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(false);
 		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
-		randomSkins = config.get(Configuration.CATEGORY_GENERAL, "randomSkins", false, randomSkinsComment).getBoolean(false);
+//		randomSkins = config.get(Configuration.CATEGORY_GENERAL, "randomSkins", false, randomSkinsComment).getBoolean(false);
 		doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
 		
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
@@ -150,7 +159,7 @@ public class WalkingDead {
 		proxy.registerServerTickHandler();
 	}
 	
-	@Init
+	@EventHandler
 	public void load(FMLInitializationEvent evt) {
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id);

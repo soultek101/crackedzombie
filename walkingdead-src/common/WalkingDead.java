@@ -19,30 +19,20 @@
 package walkingdead.common;
 
 //import java.nio.sIntBuffer;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
-import net.minecraftforge.common.EnumHelper;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
@@ -61,6 +51,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import java.util.logging.Level;
 
 @Mod (
 	modid = WalkingDead.modid,
@@ -98,7 +89,7 @@ public class WalkingDead {
 	private boolean randomSkins;
 	private boolean doorBusting;
 	
-	private Logger logger;
+	private static final Logger logger = Logger.getLogger(WalkingDead.modid);;
 	
 	@SidedProxy(
 		clientSide = "walkingdead.client.ClientProxyWalkingDead",
@@ -109,7 +100,6 @@ public class WalkingDead {
 	
 	@EventHandler
 	public void preLoad(FMLPreInitializationEvent event) {
-		logger = Logger.getLogger(WalkingDead.modid);
 		logger.setParent(FMLLog.getLogger());
 		
 		String generalComments = WalkingDead.name + " Config\nMichael Sheppard (crackedEgg)\n";
@@ -217,7 +207,7 @@ public class WalkingDead {
 			}
 			// exclude nether, end, and ocean biomes
 			if (!(biomegenbase instanceof BiomeGenHell) && !(biomegenbase instanceof BiomeGenEnd) && !(biomegenbase instanceof BiomeGenOcean)) {
-				logger.info(" >>> Adding " + biomegenbase.biomeName + " for spawning");
+				logger.log(Level.INFO, " >>> Adding {0} for spawning", biomegenbase.biomeName);
 				linkedlist.add(biomegenbase);
 			}
 		}

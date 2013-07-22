@@ -21,25 +21,19 @@
 package walkingdead.client;
 
 import java.util.Map;
-import java.util.Random;
 
 import com.google.common.collect.Maps;
 
 import walkingdead.common.EntityWalkingDead;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
-import net.minecraft.client.renderer.texture.LayeredTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
 //import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityCow;
 
 @SideOnly(Side.CLIENT)
 public class RenderWalkingDead extends RenderBiped {

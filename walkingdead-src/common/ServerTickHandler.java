@@ -34,7 +34,7 @@ public class ServerTickHandler implements ITickHandler {
 		if (type.contains(TickType.WORLD)) {
 			WorldServer world = (WorldServer)tickData[0];
 			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
-				if (world.rand.nextBoolean()) {
+				if (world.rand.nextInt(8) == 0) { // rand.nextBoolean()
 					SpawnerWalkingDead.despawnWalker(world, WalkingDead.class);
 				}
 			}
@@ -46,7 +46,7 @@ public class ServerTickHandler implements ITickHandler {
 		if (type.contains(TickType.WORLD)) {
 			WorldServer world = (WorldServer)tickData[0];
 			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
-				if (world.rand.nextBoolean()) {
+				if (world.rand.nextInt(8) == 4) { // rand.nextBoolean()
 					SpawnerWalkingDead.SpawnWalkers(world);
 				}
 			}

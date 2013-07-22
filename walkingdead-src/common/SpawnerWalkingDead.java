@@ -15,8 +15,6 @@
 //  =====================================================================
 //
 
-//
-//
 
 package walkingdead.common;
 
@@ -24,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -41,10 +38,10 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.MinecraftForge;
 
 public final class SpawnerWalkingDead {
 	private static HashMap eligibleChunksForSpawning = new HashMap();
+    private static Random rand = new Random(System.currentTimeMillis());
 
 	protected static ChunkPosition getRandomSpawningPointInChunk(World world, int x, int z) {
 		Chunk chunk = world.getChunkFromChunkCoords(x, z);
@@ -55,7 +52,7 @@ public final class SpawnerWalkingDead {
 		return new ChunkPosition(newX, newY, newZ);
 	}
 	
-	public static final int SpawnWalkers(WorldServer worldServer) {
+	public static int SpawnWalkers(WorldServer worldServer) {
 		eligibleChunksForSpawning.clear();
 
         for (int entities = 0; entities < worldServer.playerEntities.size(); ++entities) {
@@ -81,7 +78,8 @@ public final class SpawnerWalkingDead {
         int eligibleChunks = 0;
         ChunkCoordinates spawnPoint = worldServer.getSpawnPoint();
         EnumCreatureType creatureType = EnumCreatureType.monster;
-		final int walkerSpawns = WalkingDead.instance.getWalkerSpawns();
+        // spawn random amount of walkers upto walkerSpawns count.
+		int walkerSpawns = rand.nextInt(WalkingDead.instance.getWalkerSpawns());
 
         if (worldServer.countEntities(EntityWalkingDead.class) < walkerSpawns) {
 	        Iterator iter = eligibleChunksForSpawning.keySet().iterator();

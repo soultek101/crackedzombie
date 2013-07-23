@@ -51,7 +51,9 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import java.util.logging.Level;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.BiomeDictionary;
 
 @Mod (
 	modid = WalkingDead.modid,
@@ -122,8 +124,6 @@ public class WalkingDead {
 						+ "if you want to spawn spiders";
 		String slimeComment = "slimeSpawns, set to false to disable slime spawning, set to true\n"
 				+ "if you want to spawn slimes";
-//		String randomSkinsComment = "randomSkins, set to true to use the internal random skins in the mod\n"
-//				+ "jar. Set to false to use your texture pack random mobs.";
 		String doorBustingComment = "doorBusting, set to true to have walkers try to break down doors,\n"
 				+ "otherwise set to false. It's quieter.";
 		
@@ -138,7 +138,6 @@ public class WalkingDead {
 		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
 		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(false);
 		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
-//		randomSkins = config.get(Configuration.CATEGORY_GENERAL, "randomSkins", false, randomSkinsComment).getBoolean(false);
 		doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
 		
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
@@ -153,11 +152,10 @@ public class WalkingDead {
 	public void load(FMLInitializationEvent evt) {
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityWalkingDead.class, "WalkingDead", id);
-//		EntityRegistry.registerModEntity(EntityWalkingDead.class, "WalkingDead", id, this, 80, 3, true);
 		EntityList.entityEggs.put(Integer.valueOf(id), new EntityEggInfo(id, 0x00AFAF, 0x799C45));
 		LanguageRegistry.instance().addStringLocalization("entity.WalkingDead.name", "Walker");
 		
-		// placing this function here may allow the walkers to spawn in biomes
+		// placing this function here should allow the walkers to spawn in biomes
 		// created by other mods provided those mods are loaded before this one.
 		logger.info("*** Scanning for available biomes");
 		BiomeGenBase[] biomes = getBiomeList();
@@ -194,22 +192,29 @@ public class WalkingDead {
 			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
 			logger.info("*** Removing slime spawns");
 		}
-		
+	}
+    
+    @EventHandler
+	public void PostInit(FMLPostInitializationEvent event) {
+		BiomeDictionary.registerAllBiomes();
 	}
 	
 	// This function should get all biomes that are derived from BiomeGenBase,
 	// even those from other mods.
-	public BiomeGenBase[] getBiomeList() {
+    public BiomeGenBase[] getBiomeList() {
 		LinkedList linkedlist = new LinkedList();
-		for (BiomeGenBase biomegenbase : BiomeGenBase.biomeList) {
-			if (biomegenbase == null) {
-				continue;
-			}
-			// exclude nether, end, and ocean biomes
-			if (!(biomegenbase instanceof BiomeGenHell) && !(biomegenbase instanceof BiomeGenEnd) && !(biomegenbase instanceof BiomeGenOcean)) {
-				logger.log(Level.INFO, " >>> Adding {0} for spawning", biomegenbase.biomeName);
-				linkedlist.add(biomegenbase);
-			}
+        Type[] t = {Type.FOREST, Type.PLAINS, Type.MOUNTAIN, Type.HILLS, Type.SWAMP,
+                    Type.DESERT, Type.FROZEN, Type.JUNGLE, Type.WASTELAND, Type.BEACH, Type.MUSHROOM};
+        
+		for (Type type : t) {
+            BiomeGenBase[] biomes = BiomeDictionary.getBiomesForType(type);
+            for (BiomeGenBase bgb : biomes) {
+                if (!linkedlist.contains(bgb)) {
+                    String s = " >>> Adding " + bgb.biomeName + " for spawning";
+                    logger.info(s);
+                    linkedlist.add(bgb);
+                }
+            }
 		}
 		return (BiomeGenBase[]) linkedlist.toArray(new BiomeGenBase[0]);
 	}

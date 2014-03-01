@@ -16,6 +16,9 @@
 //
 //
 //
+//
+// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+//
 package com.walkingdead.client;
 
 import com.walkingdead.common.CommonProxyWalkingDead;

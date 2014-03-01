@@ -14,15 +14,18 @@
 //  Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
 //  =====================================================================
 //
+//
+// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+//
 package com.walkingdead.common;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Iterator;
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
@@ -57,7 +60,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+//import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntityWalkingDead extends EntityMob {
 
@@ -78,7 +81,7 @@ public class EntityWalkingDead extends EntityMob {
 		tasks.addTask(0, new EntityAISwimming(this));
 		if (WalkingDead.instance.getDoorBusting()) { // include the door breaking AI
 			getNavigator().setBreakDoors(true);
-			tasks.addTask(1, new EntityAIBreakDoor(this));
+			tasks.addTask(6, new EntityAIBreakDoor(this));
 		}
 		tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
 		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0, false));
@@ -134,11 +137,7 @@ public class EntityWalkingDead extends EntityMob {
 
 	public boolean isGoodTarget(EntityLivingBase target)
 	{
-		if (target == null) {
-			return false;
-		} else if (target == this) {
-			return false;
-		} else if (!target.isEntityAlive()) {
+		if (target == null || target == this || !target.isEntityAlive()) {
 			return false;
 		} else {
 			boolean player = (target instanceof EntityPlayer);
@@ -190,7 +189,8 @@ public class EntityWalkingDead extends EntityMob {
 					int j1 = j + MathHelper.getRandomIntegerInRange(rand, 7, 40) * MathHelper.getRandomIntegerInRange(rand, -1, 1);
 					int k1 = k + MathHelper.getRandomIntegerInRange(rand, 7, 40) * MathHelper.getRandomIntegerInRange(rand, -1, 1);
 
-					if (worldObj.isSideSolid(i, i1, i1, ForgeDirection.UP)) {
+//					if (worldObj.isSideSolid(i1, j1, k1, ForgeDirection.UP)) {
+					if (World.doesBlockHaveSolidTopSurface(worldObj, i1, j1 - 1, k1)) {
 						walker.setPosition((double) i1, (double) j1, (double) k1);
 
 						if (worldObj.checkNoEntityCollision(walker.boundingBox) && worldObj.getCollidingBoundingBoxes(walker, walker.boundingBox).isEmpty() && !worldObj.isAnyLiquid(walker.boundingBox)) {
@@ -267,7 +267,7 @@ public class EntityWalkingDead extends EntityMob {
 		boolean isSand = worldObj.getBlock(x, y - 1, z) == Blocks.sand;
 		boolean isStone = (rand.nextInt(16) == 0) && (worldObj.getBlock(x, y - 1, z) == Blocks.stone);
 
-		return (isGrass || isSand || isStone) /*&& isClear*/ && notColliding && !isLiquid;
+		return (isGrass || isSand || isStone) && notColliding && !isLiquid;
 	}
 
 	@Override
@@ -627,7 +627,7 @@ public class EntityWalkingDead extends EntityMob {
 		EntityVillager villager = new EntityVillager(worldObj);
 		villager.copyLocationAndAnglesFrom(this);
 		villager.onSpawnWithEgg(null);
-//		villager.func_82187_q();
+		villager.setLookingForHome();
 
 		if (isChild()) {
 			villager.setGrowingAge(-24000);
@@ -637,7 +637,7 @@ public class EntityWalkingDead extends EntityMob {
 		worldObj.spawnEntityInWorld(villager);
 		villager.addPotionEffect(new PotionEffect(Potion.confusion.id, 200, 0));
 		worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1017, (int) posX, (int) posY, (int) posZ, 0);
-		System.out.println("Converted walker to villager!");
+//		System.out.println("Converted walker to villager!");
 	}
 
 	protected int getConversionTimeBoost()

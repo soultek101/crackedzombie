@@ -14,6 +14,9 @@
 //  Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
 //  =====================================================================
 //
+//
+// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+//
 package com.walkingdead.common;
 
 import java.util.ArrayList;
@@ -53,6 +56,7 @@ public final class SpawnerWalkingDead {
 		return new ChunkPosition(newX, newY, newZ);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static int SpawnWalkers(WorldServer worldServer)
 	{
 		eligibleChunksForSpawning.clear();
@@ -67,12 +71,7 @@ public final class SpawnerWalkingDead {
 				for (int z = -range; z <= range; ++z) {
 					boolean inRange = x == -range || x == range || z == -range || z == range;
 					ChunkCoordIntPair chunkCoord = new ChunkCoordIntPair(x + playerX, z + playerZ);
-
-					if (!inRange) {
-						eligibleChunksForSpawning.put(chunkCoord, Boolean.valueOf(false));
-					} else if (!eligibleChunksForSpawning.containsKey(chunkCoord)) {
-						eligibleChunksForSpawning.put(chunkCoord, Boolean.valueOf(true));
-					}
+					eligibleChunksForSpawning.put(chunkCoord, Boolean.valueOf(inRange));
 				}
 			}
 		}
@@ -134,7 +133,6 @@ public final class SpawnerWalkingDead {
 													++nSpawned;
 													worldServer.spawnEntityInWorld(walker);
 													entityLivingData = walker.onSpawnWithEgg(entityLivingData);
-//                                                	System.out.println("Spawned a walker: " + adjX + ", " + adjY + ", " + adjZ + " (" + nSpawned + ")");
 												}
 												eligibleChunks += nSpawned;
 											}
@@ -193,13 +191,10 @@ public final class SpawnerWalkingDead {
 			double distance = MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 			if (distance > 128.0) {
 				entity.setDead();
-//            	System.out.println("Walker has been set dead (distance: " + distance + ")");
 				return 1;
 			}
-			int age = entity.getAge();
-			if (age > 600 && worldObj.rand.nextInt(800) == 0 && distance > 32.0) {
+			if (entity.getAge() > 600 && worldObj.rand.nextInt(800) == 0 && distance > 32.0) {
 				entity.setDead();
-//            	System.out.println("Walker has been set dead (age: " + age +")");
 				return 1;
 			}
 		}

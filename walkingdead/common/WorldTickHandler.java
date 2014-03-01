@@ -15,6 +15,7 @@
 //  =====================================================================
 //
 //
+// Copyright 2011-2014 Michael Sheppard (crackedEgg)
 //
 package com.walkingdead.common;
 
@@ -31,13 +32,15 @@ public class WorldTickHandler {
 		WorldServer world = (WorldServer) event.world;
 		if (event.phase.equals(TickEvent.Phase.START)) {
 			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
-				if (world.rand.nextInt(8) == 0) {
+				int nexti = world.isDaytime() ? 2 : 8;
+				if (world.rand.nextInt(nexti) == 0) {
 					SpawnerWalkingDead.despawnWalker(world, WalkingDead.class);
 				}
 			}
 		} else if (event.phase.equals(TickEvent.Phase.END)) {
 			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
-				if (world.rand.nextInt(8) == 4) {
+				int nexti = world.isDaytime() ? 20 : 8;
+				if (world.rand.nextInt(nexti) == 4) {
 					SpawnerWalkingDead.SpawnWalkers(world);
 				}
 			}

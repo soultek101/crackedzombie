@@ -14,6 +14,9 @@
 //  Foundation, Inc., 675 Mass Ave., Cambridge, MA 02139, USA.
 //  =====================================================================
 //
+//
+// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+//
 package com.walkingdead.common;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -69,7 +72,7 @@ public class WalkingDead {
 	private int walkerSpawnProb;
 	private int walkerSpawns;
 	private boolean spawnCreepers;
-	private boolean spawnZombies;
+//	private boolean spawnZombies;
 	private boolean spawnSkeletons;
 	private boolean spawnEnderman;
 	private boolean spawnSpiders;
@@ -88,10 +91,10 @@ public class WalkingDead {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-//		logger.setParent(FMLLog.getLogger());
+//		logger = LogManager.getRootLogger();
 
 		String generalComments = WalkingDead.name + " Config\nMichael Sheppard (crackedEgg)\n"
-				+ " For Minecraft Version 1.7.2\n";
+				+ " For Minecraft Version " + WalkingDead.version + "\n";
 		String spawnProbComment = "walkerSpawnProb adjust to probability of walkers spawning,\n"
 				+ "although the custom spawning most likely overrides this. the higher the\n"
 				+ "the number the more likely walkers will spawn.";
@@ -102,9 +105,9 @@ public class WalkingDead {
 				+ "if you want to spawn creepers";
 		String skeletonComment = "skeletonSpawns, set to false to disable skeleton spawning, set to true\n"
 				+ "if you want to spawn skeletons";
-		String zombieComment = "zombieSpawns, set to false to disable zombie spawning, set to true\n"
-				+ "if you want to spawn zombies. Note that spawning zombies and other monsters\n"
-				+ "will cause the number of walkers spawned to be reduced.";
+//		String zombieComment = "zombieSpawns, set to false to disable zombie spawning, set to true\n"
+//				+ "if you want to spawn zombies. Note that spawning zombies and other monsters\n"
+//				+ "will cause the number of walkers spawned to be reduced.";
 		String endermanComment = "endermanSpawns, set to false to disable enderman spawning, set to true\n"
 				+ "if you want to spawn enderman";
 		String spiderComment = "spiderSpawns, set to false to disable spider spawning, set to true\n"
@@ -121,9 +124,9 @@ public class WalkingDead {
 		walkerSpawns = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawns", 60, walkerComment).getInt();
 		spawnCreepers = config.get(Configuration.CATEGORY_GENERAL, "spawnCreepers", false, creeperComment).getBoolean(false);
 		spawnSkeletons = config.get(Configuration.CATEGORY_GENERAL, "spawnSkeletons", false, skeletonComment).getBoolean(false);
-		spawnZombies = config.get(Configuration.CATEGORY_GENERAL, "spawnZombies", false, zombieComment).getBoolean(false);
+//		spawnZombies = config.get(Configuration.CATEGORY_GENERAL, "spawnZombies", false, zombieComment).getBoolean(false);
 		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
-		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(false);
+		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(true);
 		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
 		doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
 
@@ -151,8 +154,12 @@ public class WalkingDead {
 		DungeonHooks.addDungeonMob("WalkingDead", 200);
 		// add steel swords to the loot. you may need these.
 		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Items.iron_sword), 1, 1, 4));
+		
+		// remove zombie spawning, we are replacing zombies
+		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
+		DungeonHooks.removeDungeonMob("Zombie");
 
-		// optionally remove creeper, skeleton, and zombie spawns for these biomes
+		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
 		if (!spawnCreepers) {
 			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
 //			logger.info("*** Removing creeper spawns");
@@ -162,11 +169,11 @@ public class WalkingDead {
 			DungeonHooks.removeDungeonMob("Skeleton");
 //			logger.info("*** Removing skeleton spawns and dungeon spawners");
 		}
-		if (!spawnZombies) {
-			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
-			DungeonHooks.removeDungeonMob("Zombie");
+//		if (!spawnZombies) {
+//			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
+//			DungeonHooks.removeDungeonMob("Zombie");
 //			logger.info("*** Removing zombie spawns and dungeon spawners");
-		}
+//		}
 		if (!spawnEnderman) {
 			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
 //			logger.info("*** Removing enderman spawns");
@@ -192,7 +199,7 @@ public class WalkingDead {
 	// even those from other mods.
 	public BiomeGenBase[] getBiomeList()
 	{
-		LinkedList linkedlist = new LinkedList<BiomeGenBase>();
+		LinkedList<BiomeGenBase> linkedlist = new LinkedList<BiomeGenBase>();
 		Type[] t = {Type.FOREST, Type.PLAINS, Type.MOUNTAIN, Type.HILLS, Type.SWAMP, Type.MAGICAL,
 			Type.DESERT, Type.FROZEN, Type.JUNGLE, Type.WASTELAND, Type.BEACH, Type.MUSHROOM};
 

@@ -155,7 +155,7 @@ public class WalkingDead {
 		// add steel swords to the loot. you may need these.
 		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Items.iron_sword), 1, 1, 4));
 		
-		// remove zombie spawning, we are replacing zombies
+		// remove zombie spawning, we are replacing zombies with walkers
 		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
 		DungeonHooks.removeDungeonMob("Zombie");
 

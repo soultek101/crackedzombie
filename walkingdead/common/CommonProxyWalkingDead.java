@@ -21,9 +21,19 @@
 //
 package com.walkingdead.common;
 
+import cpw.mods.fml.common.FMLLog;
+import org.apache.logging.log4j.Logger;
+
 public class CommonProxyWalkingDead {
+	
+	private static final Logger logger = FMLLog.getLogger();
 
 	public void registerRenderers()
 	{
+	}
+	
+	public void print(String s)
+	{
+		logger.info(s);
 	}
 }

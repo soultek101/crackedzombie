@@ -34,7 +34,6 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
-//import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -46,8 +45,6 @@ import net.minecraft.init.Items;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.config.Configuration;
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
 
 @Mod(
 		modid = WalkingDead.modid,
@@ -72,7 +69,6 @@ public class WalkingDead {
 	private int walkerSpawnProb;
 	private int walkerSpawns;
 	private boolean spawnCreepers;
-//	private boolean spawnZombies;
 	private boolean spawnSkeletons;
 	private boolean spawnEnderman;
 	private boolean spawnSpiders;
@@ -80,7 +76,7 @@ public class WalkingDead {
 	private boolean randomSkins;
 	private boolean doorBusting;
 
-//	private static final Logger logger = LogManager.getLogger(WalkingDead.modid);
+	
 	@SidedProxy(
 			clientSide = "com.walkingdead.client.ClientProxyWalkingDead",
 			serverSide = "com.walkingdead.common.CommonProxyWalkingDead"
@@ -91,8 +87,6 @@ public class WalkingDead {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-//		logger = LogManager.getRootLogger();
-
 		String generalComments = WalkingDead.name + " Config\nMichael Sheppard (crackedEgg)\n"
 				+ " For Minecraft Version " + WalkingDead.version + "\n";
 		String spawnProbComment = "walkerSpawnProb adjust to probability of walkers spawning,\n"
@@ -105,9 +99,6 @@ public class WalkingDead {
 				+ "if you want to spawn creepers";
 		String skeletonComment = "skeletonSpawns, set to false to disable skeleton spawning, set to true\n"
 				+ "if you want to spawn skeletons";
-//		String zombieComment = "zombieSpawns, set to false to disable zombie spawning, set to true\n"
-//				+ "if you want to spawn zombies. Note that spawning zombies and other monsters\n"
-//				+ "will cause the number of walkers spawned to be reduced.";
 		String endermanComment = "endermanSpawns, set to false to disable enderman spawning, set to true\n"
 				+ "if you want to spawn enderman";
 		String spiderComment = "spiderSpawns, set to false to disable spider spawning, set to true\n"
@@ -124,7 +115,6 @@ public class WalkingDead {
 		walkerSpawns = config.get(Configuration.CATEGORY_GENERAL, "walkerSpawns", 60, walkerComment).getInt();
 		spawnCreepers = config.get(Configuration.CATEGORY_GENERAL, "spawnCreepers", false, creeperComment).getBoolean(false);
 		spawnSkeletons = config.get(Configuration.CATEGORY_GENERAL, "spawnSkeletons", false, skeletonComment).getBoolean(false);
-//		spawnZombies = config.get(Configuration.CATEGORY_GENERAL, "spawnZombies", false, zombieComment).getBoolean(false);
 		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
 		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(true);
 		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
@@ -145,7 +135,7 @@ public class WalkingDead {
 	{
 		// placing this function here should allow the walkers to spawn in biomes
 		// created by other mods provided those mods are loaded before this one.
-//		logger.info("*** Scanning for available biomes");
+		proxy.print("*** Scanning for available biomes");
 		BiomeGenBase[] biomes = getBiomeList();
 
 		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
@@ -162,39 +152,30 @@ public class WalkingDead {
 		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
 		if (!spawnCreepers) {
 			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
-//			logger.info("*** Removing creeper spawns");
+			proxy.print("*** Removing creeper spawns");
 		}
 		if (!spawnSkeletons) {
 			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
 			DungeonHooks.removeDungeonMob("Skeleton");
-//			logger.info("*** Removing skeleton spawns and dungeon spawners");
+			proxy.print("*** Removing skeleton spawns and dungeon spawners");
 		}
-//		if (!spawnZombies) {
-//			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
-//			DungeonHooks.removeDungeonMob("Zombie");
-//			logger.info("*** Removing zombie spawns and dungeon spawners");
-//		}
 		if (!spawnEnderman) {
 			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
-//			logger.info("*** Removing enderman spawns");
+			proxy.print("*** Removing enderman spawns");
 		}
 		if (!spawnSpiders) {
 			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, biomes);
 			DungeonHooks.removeDungeonMob("Spider");
-//			logger.info("*** Removing spider spawns and dungeon spawners");
+			proxy.print("*** Removing spider spawns and dungeon spawners");
 		}
 		if (!spawnSlime) {
 			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
-//			logger.info("*** Removing slime spawns");
+			proxy.print("*** Removing slime spawns");
 		}
 
 		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
 
-//    @EventHandler
-//	public void PostInit(FMLPostInitializationEvent event) {
-//		BiomeDictionary.registerAllBiomes();
-//	}
 	// This function should get all biomes that are derived from BiomeGenBase,
 	// even those from other mods.
 	public BiomeGenBase[] getBiomeList()
@@ -207,8 +188,7 @@ public class WalkingDead {
 			BiomeGenBase[] biomes = BiomeDictionary.getBiomesForType(type);
 			for (BiomeGenBase bgb : biomes) {
 				if (!linkedlist.contains(bgb)) {
-//                    String s = " >>> Adding " + bgb.biomeName + " for spawning";
-//                    logger.info(s);
+                    proxy.print(" >>> Adding " + bgb.biomeName + " for spawning");
 					linkedlist.add(bgb);
 				}
 			}

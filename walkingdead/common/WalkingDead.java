@@ -228,6 +228,7 @@ public class WalkingDead {
 			BiomeGenBase[] biomes = BiomeDictionary.getBiomesForType(type);
 			for (BiomeGenBase bgb : biomes) {
 				if (BiomeDictionary.isBiomeOfType(bgb, Type.WATER)) { // exclude ocean biomes
+					proxy.print("<<< Excluding " + bgb.biomeName + " for spawning");
 					continue;
 				}
 				if (!linkedlist.contains(bgb)) {

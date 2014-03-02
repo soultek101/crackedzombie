@@ -40,6 +40,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.init.Items;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -135,15 +136,55 @@ public class WalkingDead {
 	{
 		// placing this function here should allow the walkers to spawn in biomes
 		// created by other mods provided those mods are loaded before this one.
-		proxy.print("*** Scanning for available biomes");
-		BiomeGenBase[] biomes = getBiomeList();
-
-		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
+//		proxy.print("*** Scanning for available biomes");
+//		BiomeGenBase[] biomes = getBiomeList();
+//
+//		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
 
 		// walkers should spawn in dungeon spawners
 		DungeonHooks.addDungeonMob("WalkingDead", 200);
 		// add steel swords to the loot. you may need these.
 		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Items.iron_sword), 1, 1, 4));
+		
+//		// remove zombie spawning, we are replacing zombies with walkers
+//		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
+//		DungeonHooks.removeDungeonMob("Zombie");
+//
+//		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
+//		if (!spawnCreepers) {
+//			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
+//			proxy.print("*** Removing creeper spawns");
+//		}
+//		if (!spawnSkeletons) {
+//			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
+//			DungeonHooks.removeDungeonMob("Skeleton");
+//			proxy.print("*** Removing skeleton spawns and dungeon spawners");
+//		}
+//		if (!spawnEnderman) {
+//			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
+//			proxy.print("*** Removing enderman spawns");
+//		}
+//		if (!spawnSpiders) {
+//			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, biomes);
+//			DungeonHooks.removeDungeonMob("Spider");
+//			proxy.print("*** Removing spider spawns and dungeon spawners");
+//		}
+//		if (!spawnSlime) {
+//			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
+//			proxy.print("*** Removing slime spawns");
+//		}
+
+		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
+	}
+	
+    @EventHandler
+	public void PostInit(FMLPostInitializationEvent event) {
+		BiomeDictionary.registerAllBiomesAndGenerateEvents();
+		
+		proxy.print("*** Scanning for available biomes");
+		BiomeGenBase[] biomes = getBiomeList();
+
+		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
 		
 		// remove zombie spawning, we are replacing zombies with walkers
 		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
@@ -172,26 +213,13 @@ public class WalkingDead {
 			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
 			proxy.print("*** Removing slime spawns");
 		}
-
-		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
-
+	
 	// This function should get all biomes that are derived from BiomeGenBase,
 	// even those from other mods.
 	public BiomeGenBase[] getBiomeList()
 	{
 		LinkedList<BiomeGenBase> linkedlist = new LinkedList<BiomeGenBase>();
-		
-		// Add some new (1.7) biomes that are not added in Forge BiomeDictionary
-		BiomeDictionary.registerBiomeType(BiomeGenBase.mesa, Type.DESERT);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.mesaPlateau, Type.DESERT);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.mesaPlateau_F, Type.DESERT);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.savanna, Type.PLAINS);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.savannaPlateau, Type.PLAINS);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.birchForest, Type.FOREST);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.birchForestHills, Type.FOREST, Type.HILLS);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.roofedForest, Type.FOREST);
-		BiomeDictionary.registerBiomeType(BiomeGenBase.stoneBeach, Type.BEACH);
 		
 		Type[] t = {Type.FOREST, Type.PLAINS, Type.MOUNTAIN, Type.HILLS, Type.SWAMP, Type.MAGICAL,
 			Type.DESERT, Type.FROZEN, Type.JUNGLE, Type.WASTELAND, Type.BEACH, Type.MUSHROOM};
@@ -199,8 +227,11 @@ public class WalkingDead {
 		for (Type type : t) {
 			BiomeGenBase[] biomes = BiomeDictionary.getBiomesForType(type);
 			for (BiomeGenBase bgb : biomes) {
+				if (BiomeDictionary.isBiomeOfType(bgb, Type.WATER)) { // exclude ocean biomes
+					continue;
+				}
 				if (!linkedlist.contains(bgb)) {
-                    proxy.print(" >>> Adding " + bgb.biomeName + " for spawning");
+                    proxy.print(">>> Adding " + bgb.biomeName + " for spawning");
 					linkedlist.add(bgb);
 				}
 			}

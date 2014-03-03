@@ -134,51 +134,17 @@ public class WalkingDead {
 	@EventHandler
 	public void Init(FMLInitializationEvent evt)
 	{
-		// placing this function here should allow the walkers to spawn in biomes
-		// created by other mods provided those mods are loaded before this one.
-//		proxy.print("*** Scanning for available biomes");
-//		BiomeGenBase[] biomes = getBiomeList();
-//
-//		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
-
 		// walkers should spawn in dungeon spawners
 		DungeonHooks.addDungeonMob("WalkingDead", 200);
 		// add steel swords to the loot. you may need these.
 		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Items.iron_sword), 1, 1, 4));
 		
-//		// remove zombie spawning, we are replacing zombies with walkers
-//		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
-//		DungeonHooks.removeDungeonMob("Zombie");
-//
-//		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
-//		if (!spawnCreepers) {
-//			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
-//			proxy.print("*** Removing creeper spawns");
-//		}
-//		if (!spawnSkeletons) {
-//			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
-//			DungeonHooks.removeDungeonMob("Skeleton");
-//			proxy.print("*** Removing skeleton spawns and dungeon spawners");
-//		}
-//		if (!spawnEnderman) {
-//			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
-//			proxy.print("*** Removing enderman spawns");
-//		}
-//		if (!spawnSpiders) {
-//			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, biomes);
-//			DungeonHooks.removeDungeonMob("Spider");
-//			proxy.print("*** Removing spider spawns and dungeon spawners");
-//		}
-//		if (!spawnSlime) {
-//			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
-//			proxy.print("*** Removing slime spawns");
-//		}
-
 		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
 	
     @EventHandler
-	public void PostInit(FMLPostInitializationEvent event) {
+	public void PostInit(FMLPostInitializationEvent event)
+	{
 		BiomeDictionary.registerAllBiomesAndGenerateEvents();
 		
 		proxy.print("*** Scanning for available biomes");
@@ -186,31 +152,33 @@ public class WalkingDead {
 
 		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
 		
+		BiomeGenBase[] allBiomes = BiomeGenBase.getBiomeGenArray();
+		
 		// remove zombie spawning, we are replacing zombies with walkers
-		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
+		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, allBiomes);
 		DungeonHooks.removeDungeonMob("Zombie");
-
+		
 		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
 		if (!spawnCreepers) {
-			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
+			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, allBiomes);
 			proxy.print("*** Removing creeper spawns");
 		}
 		if (!spawnSkeletons) {
-			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
+			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, allBiomes);
 			DungeonHooks.removeDungeonMob("Skeleton");
 			proxy.print("*** Removing skeleton spawns and dungeon spawners");
 		}
 		if (!spawnEnderman) {
-			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
+			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, allBiomes);
 			proxy.print("*** Removing enderman spawns");
 		}
 		if (!spawnSpiders) {
-			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, biomes);
+			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, allBiomes);
 			DungeonHooks.removeDungeonMob("Spider");
 			proxy.print("*** Removing spider spawns and dungeon spawners");
 		}
 		if (!spawnSlime) {
-			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
+			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, allBiomes);
 			proxy.print("*** Removing slime spawns");
 		}
 	}
@@ -228,11 +196,11 @@ public class WalkingDead {
 			BiomeGenBase[] biomes = BiomeDictionary.getBiomesForType(type);
 			for (BiomeGenBase bgb : biomes) {
 				if (BiomeDictionary.isBiomeOfType(bgb, Type.WATER)) { // exclude ocean biomes
-					proxy.print("<<< Excluding " + bgb.biomeName + " for spawning");
+					proxy.print("  <<< Excluding " + bgb.biomeName + " for spawning");
 					continue;
 				}
 				if (!linkedlist.contains(bgb)) {
-                    proxy.print(">>> Adding " + bgb.biomeName + " for spawning");
+                    proxy.print("  >>> Adding " + bgb.biomeName + " for spawning");
 					linkedlist.add(bgb);
 				}
 			}

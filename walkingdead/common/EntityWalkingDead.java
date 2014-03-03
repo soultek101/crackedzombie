@@ -60,7 +60,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-//import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntityWalkingDead extends EntityMob {
 
@@ -70,8 +69,6 @@ public class EntityWalkingDead extends EntityMob {
 
 	private int conversionTime = 0;
 	private final float attackDistance = 16.0F;
-	private int walkerSkinIndex;
-	private int villagerSkinIndex;
 
 	public EntityWalkingDead(World world)
 	{
@@ -189,7 +186,6 @@ public class EntityWalkingDead extends EntityMob {
 					int j1 = j + MathHelper.getRandomIntegerInRange(rand, 7, 40) * MathHelper.getRandomIntegerInRange(rand, -1, 1);
 					int k1 = k + MathHelper.getRandomIntegerInRange(rand, 7, 40) * MathHelper.getRandomIntegerInRange(rand, -1, 1);
 
-//					if (worldObj.isSideSolid(i1, j1, k1, ForgeDirection.UP)) {
 					if (World.doesBlockHaveSolidTopSurface(worldObj, i1, j1 - 1, k1)) {
 						walker.setPosition((double) i1, (double) j1, (double) k1);
 
@@ -207,16 +203,6 @@ public class EntityWalkingDead extends EntityMob {
 
 			return true;
 		}
-//		if (isEntityInvulnerable()) {
-//            return false;
-//        } else if (super.attackEntityFrom(damageSource, damage)) {
-//        	if (damageSource.isProjectile()) {
-//        		// apply random damage multiplier to arrows (range 1 - 3)
-//        		damage *= (rand.nextInt(3) + 1);
-//        		damageEntity(damageSource, damage);
-//        		return true;
-//        	}
-//        }
 		return false;
 	}
 
@@ -277,11 +263,6 @@ public class EntityWalkingDead extends EntityMob {
 		getDataWatcher().addObject(12, Byte.valueOf((byte) 0));
 		getDataWatcher().addObject(13, Byte.valueOf((byte) 0));
 		getDataWatcher().addObject(14, Byte.valueOf((byte) 0));
-
-		walkerSkinIndex = rand.nextInt(6);
-		villagerSkinIndex = rand.nextInt(3);
-		getDataWatcher().addObject(24, Byte.valueOf((byte) walkerSkinIndex));
-		getDataWatcher().addObject(25, Byte.valueOf((byte) villagerSkinIndex));
 	}
 
 	@Override
@@ -445,9 +426,6 @@ public class EntityWalkingDead extends EntityMob {
 		}
 
 		nbt.setInteger("ConversionTime", isConverting() ? conversionTime : -1);
-
-		nbt.setInteger("WalkerSkinIdx", getWalkerSkinIndex());
-		nbt.setInteger("VillagerSkinIdx", getVillagerSkinIndex());
 	}
 
 	@Override
@@ -466,65 +444,8 @@ public class EntityWalkingDead extends EntityMob {
 		if (nbt.hasKey("ConversionTime") && nbt.getInteger("ConversionTime") > -1) {
 			startConversion(nbt.getInteger("ConversionTime"));
 		}
-
-		walkerSkinIndex = nbt.getInteger("WalkerSkinIdx");
-		villagerSkinIndex = nbt.getInteger("VillagererSkinIdx");
 	}
 
-//    @Override
-//    public EntityLivingData onSpawnWithEgg(EntityLivingData entityLivingData)
-//    {
-//        Object entityLD = super.onSpawnWithEgg(entityLivingData);
-//        float f = this.worldObj.getLocationTensionFactor(posX, posY, posZ);
-//        setCanPickUpLoot(this.rand.nextFloat() < 0.55F * f);
-//        
-//        float nf = worldObj.rand.nextFloat();
-//		if (nf < 0.05F) {
-//			setVillager(true);
-//		} else if (nf >= 0.05 && nf <= 0.08) {
-//			setChild(true);
-//		}
-//
-//        addRandomArmor();
-//        enchantEquipment();
-//
-//        if (getCurrentItemOrArmor(4) == null) {
-//            Calendar calendar = this.worldObj.getCurrentDate();
-//
-//            if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F) {
-//                setCurrentItemOrArmor(4, new ItemStack(this.rand.nextFloat() < 0.1F ? Block.pumpkinLantern : Block.pumpkin));
-//                equipmentDropChances[4] = 0.0F;
-//            }
-//        }
-//
-//        getEntityAttribute(SharedMonsterAttributes.knockbackResistance).applyModifier(new AttributeModifier("Random spawn bonus", rand.nextDouble() * 0.05000000074505806D, 0));
-//        getEntityAttribute(SharedMonsterAttributes.followRange).applyModifier(new AttributeModifier("Random zombie-spawn bonus", rand.nextDouble() * 1.5D, 2));
-//
-//        if (rand.nextFloat() < f * 0.05F) {
-//            getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Leader zombie bonus", rand.nextDouble() * 0.25D + 0.5D, 0));
-//            getEntityAttribute(SharedMonsterAttributes.maxHealth).applyModifier(new AttributeModifier("Leader zombie bonus", rand.nextDouble() * 3.0D + 1.0D, 2));
-//        }
-//
-//        return (EntityLivingData)entityLD;
-//    }
-//	public EntityLivingData onSpawnWithEgg(EntityLivingData entityLivingData)
-//    {
-//        entityLivingData = super.onSpawnWithEgg(entityLivingData);
-//        float f = worldObj.getLocationTensionFactor(posX, posY, posZ);
-//        setCanPickUpLoot(rand.nextFloat() < 0.55F * f);
-//        
-//        float nf = worldObj.rand.nextFloat();
-//		if (nf < 0.05F) {
-//			setVillager(true);
-//		} else if (nf >= 0.05 && nf <= 0.08) {
-//			setChild(true);
-//		}
-//
-//        addRandomArmor();
-//        enchantEquipment();
-//        
-//        return entityLivingData;
-//    }
 	@Override
 	protected void addRandomArmor()
 	{
@@ -665,22 +586,6 @@ public class EntityWalkingDead extends EntityMob {
 		}
 
 		return boostTime;
-	}
-
-	public int getWalkerSkinIndex()
-	{
-		return getDataWatcher().getWatchableObjectByte(24);
-	}
-
-	public int getVillagerSkinIndex()
-	{
-		return getDataWatcher().getWatchableObjectByte(25);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public int getSkinIndex()
-	{
-		return isVillager() ? villagerSkinIndex : walkerSkinIndex;
 	}
 
 }

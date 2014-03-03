@@ -41,36 +41,15 @@ public class RenderWalkingDead extends RenderBiped {
 	protected ModelBiped childWalkerVillager;
 	private int nZombieVillagers = 1;
 
-	private static final ResourceLocation walkerSkins[] = new ResourceLocation[6];
-	private static final ResourceLocation villager_walkerSkins[] = new ResourceLocation[3];
-
-	private static final ResourceLocation walker0 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker0.png");
-	private static final ResourceLocation walker1 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker1.png");
-	private static final ResourceLocation walker2 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker2.png");
-	private static final ResourceLocation walker3 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker3.png");
-	private static final ResourceLocation walker4 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker4.png");
-	private static final ResourceLocation walker5 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker5.png");
-
-	private static final ResourceLocation villager_walker0 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker_villager0.png");
-	private static final ResourceLocation villager_walker1 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker_villager1.png");
-	private static final ResourceLocation villager_walker2 = new ResourceLocation("walkingdeadmod", "textures/entity/walkers/walker_villager2.png");
+	private static final ResourceLocation walkerSkin = new ResourceLocation("textures/entity/zombie/zombie.png");
+    private static final ResourceLocation walkerVillagerSkin = new ResourceLocation("textures/entity/zombie/zombie_villager.png");
+	
 
 	public RenderWalkingDead()
 	{
 		super(new ModelWalkingDead(), 0.5F, 1.0F);
 		currentModel = modelBipedMain;
 		walkerVillager = new ModelWalkingDeadVillager();
-
-		walkerSkins[0] = walker0;
-		walkerSkins[1] = walker1;
-		walkerSkins[2] = walker2;
-		walkerSkins[3] = walker3;
-		walkerSkins[4] = walker4;
-		walkerSkins[5] = walker5;
-
-		villager_walkerSkins[0] = villager_walker0;
-		villager_walkerSkins[1] = villager_walker1;
-		villager_walkerSkins[2] = villager_walker2;
 	}
 
 	@Override
@@ -124,8 +103,7 @@ public class RenderWalkingDead extends RenderBiped {
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity)
 	{
-		int idx = ((EntityWalkingDead) entity).getSkinIndex();
-		return ((EntityWalkingDead) entity).isVillager() ? villager_walkerSkins[idx] : walkerSkins[idx];
+		return ((EntityWalkingDead) entity).isVillager() ? walkerVillagerSkin : walkerSkin;
 	}
 
 	@Override

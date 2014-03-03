@@ -152,33 +152,31 @@ public class WalkingDead {
 
 		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
 		
-		BiomeGenBase[] allBiomes = BiomeGenBase.getBiomeGenArray();
-		
 		// remove zombie spawning, we are replacing zombies with walkers
-		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, allBiomes);
+		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
 		DungeonHooks.removeDungeonMob("Zombie");
 		
 		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
 		if (!spawnCreepers) {
-			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, biomes);
 			proxy.print("*** Removing creeper spawns");
 		}
 		if (!spawnSkeletons) {
-			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, biomes);
 			DungeonHooks.removeDungeonMob("Skeleton");
 			proxy.print("*** Removing skeleton spawns and dungeon spawners");
 		}
 		if (!spawnEnderman) {
-			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, biomes);
 			proxy.print("*** Removing enderman spawns");
 		}
 		if (!spawnSpiders) {
-			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, biomes);
 			DungeonHooks.removeDungeonMob("Spider");
 			proxy.print("*** Removing spider spawns and dungeon spawners");
 		}
 		if (!spawnSlime) {
-			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, biomes);
 			proxy.print("*** Removing slime spawns");
 		}
 	}

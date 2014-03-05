@@ -20,7 +20,7 @@
 package com.walkingdead.common;
 
 import java.util.List;
-import java.util.Random;
+//import java.util.Random;
 import java.util.UUID;
 
 import cpw.mods.fml.relauncher.Side;
@@ -94,7 +94,7 @@ public class EntityWalkingDead extends EntityMob {
 		targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityChicken.class, 8, false));
 		targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPig.class, 8, false));
 
-		rand = new Random(System.currentTimeMillis());
+//		rand = new Random(System.currentTimeMillis());
 	}
 
 	@Override

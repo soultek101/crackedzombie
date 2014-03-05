@@ -19,6 +19,7 @@
 //
 package com.walkingdead.common;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import java.util.LinkedList;
 
@@ -39,6 +40,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -139,6 +141,9 @@ public class WalkingDead {
 		// add steel swords to the loot. you may need these.
 		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Items.iron_sword), 1, 1, 4));
 		
+		// allow this mod to load if there are missing mappings
+		FMLClientHandler.instance().setDefaultMissingAction(FMLMissingMappingsEvent.Action.IGNORE);
+		
 		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
 	
@@ -153,6 +158,7 @@ public class WalkingDead {
 		EntityRegistry.addSpawn(EntityWalkingDead.class, walkerSpawnProb, 2, 10, EnumCreatureType.monster, biomes);
 		
 		// remove zombie spawning, we are replacing zombies with walkers
+		proxy.print("*** Disabling zombie spawns");
 		EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, biomes);
 		DungeonHooks.removeDungeonMob("Zombie");
 		

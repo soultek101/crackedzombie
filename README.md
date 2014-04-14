@@ -1,4 +1,4 @@
-walkingdead 1.6.x
+cracked zombie mod 1.7.2
 ===========
 
-Walkingdead mod, walkers are everywhere.
+cracked zombie mod, they are everywhere.

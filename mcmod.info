@@ -1,13 +1,13 @@
 [
 	{
-		"modid": "walkingdeadmod",
-		"name": "WalkingDead Mod",
-		"description": "Walking Dead mod adds zombies in the day time! Walkers they are called.",
+		"modid": "crackedzombiemod",
+		"name": "CrackedZombie Mod",
+		"description": "Cracked Zombie mod adds zombies in the day time!",
 		"version": $version,
 		"mcversion": $mcversion,
 		"url": "",
 		"updateUrl": "",
-		"authors": [ "crackedEgg" ],
+		"authorList": [ "crackedEgg" ],
 		"credits": "Created by crackedEgg",
 		"logoFile": "pack.png",
 		"screenshots": [],

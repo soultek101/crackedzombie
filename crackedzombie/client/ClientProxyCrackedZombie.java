@@ -35,10 +35,4 @@ public class ClientProxyCrackedZombie extends CommonProxyCrackedZombie {
 		RenderingRegistry.registerEntityRenderingHandler(EntityCrackedZombie.class, new RenderCrackedZombie());
 	}
 	
-	@Override
-	public void registerHandlers()
-	{
-		// allow this mod to load if there are missing mappings
-//		FMLClientHandler.instance().setDefaultMissingAction(FMLMissingMappingsEvent.Action.IGNORE);
-	}
 }

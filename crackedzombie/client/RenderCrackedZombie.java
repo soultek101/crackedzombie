@@ -63,7 +63,7 @@ public class RenderCrackedZombie extends RenderBiped {
 		childZombieVillager = new ModelCrackedZombieVillager(0.5F, 0.0F, true);
 	}
 
-	private void func_82427_a(EntityCrackedZombie entityCrackedZombie)
+	private void setModel(EntityCrackedZombie entityCrackedZombie)
 	{
 		if (entityCrackedZombie.isVillager()) {
 			if (nZombieVillagers != zombieVillager.getMaxCrackedZombieVillagers()) {
@@ -97,7 +97,7 @@ public class RenderCrackedZombie extends RenderBiped {
 	@Override
 	protected void rotateCorpse(EntityLivingBase entityLivingBase, float par2, float par3, float par4)
 	{
-		this.rotateCorpse((EntityCrackedZombie) entityLivingBase, par2, par3, par4);
+		rotateCorpse((EntityCrackedZombie) entityLivingBase, par2, par3, par4);
 	}
 
 	@Override
@@ -109,21 +109,39 @@ public class RenderCrackedZombie extends RenderBiped {
 	@Override
 	protected void renderEquippedItems(EntityLivingBase entityLiving, float par2)
 	{
-		func_82427_a((EntityCrackedZombie) entityLiving);
+		setModel((EntityCrackedZombie) entityLiving);
 		super.renderEquippedItems(entityLiving, par2);
 	}
 
 	@Override
 	protected int shouldRenderPass(EntityLiving entityLiving, int par2, float par3)
 	{
-		func_82427_a((EntityCrackedZombie) entityLiving);
+		setModel((EntityCrackedZombie) entityLiving);
 		return super.shouldRenderPass(entityLiving, par2, par3);
 	}
 
+//	@Override
+//	public void doRender(Entity entity, double x, double y, double z, float par8, float par9)
+//	{
+//		this.doRender((EntityCrackedZombie) entity, x, y, z, par8, par9);
+//	}
+	
 	@Override
-	public void doRender(Entity entity, double par2, double par4, double par6, float par8, float par9)
+	public void doRender(EntityLiving entity, double x, double y, double z, float par8, float par9)
 	{
-		this.doRender((EntityCrackedZombie) entity, par2, par4, par6, par8, par9);
+		this.doRender((EntityCrackedZombie) entity, x, y, z, par8, par9);
+	}
+	
+//	@Override
+//	public void doRender(EntityLivingBase entity, double x, double y, double z, float par8, float par9)
+//	{
+//		this.doRender((EntityCrackedZombie) entity, x, y, z, par8, par9);
+//	}
+	
+	public void doRender(EntityCrackedZombie entity, double x, double y, double z, float par8, float par9)
+	{
+		setModel(entity);
+		super.doRender((EntityLiving)entity, x, y, z, par8, par9);
 	}
 
 }

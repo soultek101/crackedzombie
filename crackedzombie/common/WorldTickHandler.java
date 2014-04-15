@@ -19,27 +19,27 @@
 //
 package com.crackedzombie.common;
 
-import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 import net.minecraft.world.WorldServer;
 
 public class WorldTickHandler {
 
-	@Subscribe
+	@SubscribeEvent
 	public void onTick(TickEvent.WorldTickEvent event)
 	{
 		WorldServer world = (WorldServer) event.world;
 		if (event.phase.equals(TickEvent.Phase.START)) {
 			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
-				int nexti = world.isDaytime() ? 2 : 8;
+				int nexti = world.isDaytime() ? 8 : 16;
 				if (world.rand.nextInt(nexti) == 0) {
 					SpawnerCrackedZombie.despawnCrackedZombie(world, CrackedZombie.class);
 				}
 			}
 		} else if (event.phase.equals(TickEvent.Phase.END)) {
 			if (world.getGameRules().getGameRuleBooleanValue("doMobSpawning")) {
-				int nexti = world.isDaytime() ? 20 : 8;
+				int nexti = world.isDaytime() ? 10 : 8;
 				if (world.rand.nextInt(nexti) == 4) {
 					SpawnerCrackedZombie.SpawnCrackedZombies(world);
 				}

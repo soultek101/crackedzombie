@@ -39,7 +39,7 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.ForgeDirection;
+//import net.minecraftforge.common.util.ForgeDirection;
 
 public final class SpawnerCrackedZombie {
 
@@ -76,7 +76,7 @@ public final class SpawnerCrackedZombie {
 			}
 		}
 
-		int eligibleChunks = 0;
+		int totalSpawned = 0;
 		ChunkCoordinates spawnPoint = worldServer.getSpawnPoint();
 		EnumCreatureType creatureType = EnumCreatureType.monster;
 		// spawn random amount of zombies upto zombieSpawns count.
@@ -133,28 +133,29 @@ public final class SpawnerCrackedZombie {
 													++nSpawned;
 													worldServer.spawnEntityInWorld(zombie);
 													entityLivingData = zombie.onSpawnWithEgg(entityLivingData);
+													CrackedZombie.proxy.print("*** Spawned a CrackedZombie");
 												}
-												eligibleChunks += nSpawned;
+												totalSpawned += nSpawned;
 											}
 										}
 									}
 									++spawnAttempts;
 									continue;
-								}
+								} // if spawnAttempts < 4
 								++spawnCount;
 								break;
-							}
+							} // while true
 						}
 					}
 				}
 			}
 		}
-		return eligibleChunks;
+		return totalSpawned;
 	}
 
 	public static boolean canCreatureTypeSpawnAtLocation(EnumCreatureType creatureType, World world, int x, int y, int z)
 	{
-		if (!world.isSideSolid(x, y - 1, z, ForgeDirection.UP)) {
+		if (!World.doesBlockHaveSolidTopSurface(world, x, y, z)) {//isSideSolid(x, y - 1, z, ForgeDirection.UP)) {
 			return false;
 		} else {
 			Block block = world.getBlock(x, y - 1, z);
@@ -189,11 +190,11 @@ public final class SpawnerCrackedZombie {
 			double deltaY = ((Entity) (entityplayer)).posY - entity.posY;
 			double deltaZ = ((Entity) (entityplayer)).posZ - entity.posZ;
 			double distance = MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-			if (distance > 128.0) {
+			if (distance > 576.0) {
 				entity.setDead();
 				return 1;
 			}
-			if (entity.getAge() > 600 && worldObj.rand.nextInt(800) == 0 && distance > 32.0) {
+			if (entity.getAge() > 2400 && worldObj.rand.nextInt(800) == 0 && distance > 32.0) {
 				entity.setDead();
 				return 1;
 			}

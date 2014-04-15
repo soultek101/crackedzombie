@@ -21,7 +21,7 @@ package com.crackedzombie.common;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
-import cpw.mods.fml.common.FMLCommonHandler;
+//import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 //import cpw.mods.fml.common.Mod.Instance;
@@ -30,7 +30,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
-//import java.util.LinkedList;
+import java.util.LinkedList;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -43,7 +43,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
-//import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
 import net.minecraftforge.common.config.Configuration;
@@ -125,7 +125,7 @@ public class CrackedZombie {
 		EntityRegistry.registerGlobalEntityID(EntityCrackedZombie.class, "CrackedZombie", id, 0x00AFAF, 0x799C45);
 
 		proxy.registerRenderers();
-		proxy.registerHandlers();
+		proxy.registerWorldHandler();
 	}
 
 	@EventHandler
@@ -135,8 +135,6 @@ public class CrackedZombie {
 		DungeonHooks.addDungeonMob("CrackedZombie", 200);
 		// add steel swords to the loot. you may need these.
 		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Items.iron_sword), 1, 1, 4));
-		
-		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
 	
     @EventHandler
@@ -145,9 +143,9 @@ public class CrackedZombie {
 		BiomeDictionary.registerAllBiomesAndGenerateEvents();
 		
 		proxy.print("*** Scanning for available biomes");
-//		BiomeGenBase[] biomes = getBiomeList();
-		BiomeGenBase[] allBiomes = Iterators.toArray(Iterators.filter(Iterators.forArray(BiomeGenBase.getBiomeGenArray()),
-				Predicates.notNull()), BiomeGenBase.class);
+//		BiomeGenBase[] allBiomes = getBiomeList();
+		BiomeGenBase[] allBiomes = Iterators.toArray(Iterators.filter(Iterators.forArray(BiomeGenBase.getBiomeGenArray()),	Predicates.notNull()), BiomeGenBase.class);
+		printBiomeList(allBiomes);
 
 		EntityRegistry.addSpawn(EntityCrackedZombie.class, zombieSpawnProb, 2, 10, EnumCreatureType.monster, allBiomes);
 		
@@ -183,29 +181,36 @@ public class CrackedZombie {
 	
 	// This function should get all biomes that are derived from BiomeGenBase,
 	// even those from other mods.
-//	public BiomeGenBase[] getBiomeList()
-//	{
-//		LinkedList<BiomeGenBase> linkedlist = new LinkedList<BiomeGenBase>();
-//		
-//		Type[] t = {Type.FOREST, Type.PLAINS, Type.MOUNTAIN, Type.HILLS, Type.SWAMP, Type.MAGICAL,
-//			Type.DESERT, Type.FROZEN, Type.JUNGLE, Type.WASTELAND, Type.BEACH, Type.MUSHROOM};
-//
-//		for (Type type : t) {
-//			BiomeGenBase[] biomes = BiomeDictionary.getBiomesForType(type);
-//			for (BiomeGenBase bgb : biomes) {
-//				if (BiomeDictionary.isBiomeOfType(bgb, Type.WATER)) { // exclude ocean biomes
-//					proxy.print("  <<< Excluding " + bgb.biomeName + " for spawning");
-//					continue;
-//				}
-//				if (!linkedlist.contains(bgb)) {
-//                    proxy.print("  >>> Adding " + bgb.biomeName + " for spawning");
-//					linkedlist.add(bgb);
-//				}
-//			}
-//		}
-//		return (BiomeGenBase[]) linkedlist.toArray(new BiomeGenBase[0]);
-//	}
+	public BiomeGenBase[] getBiomeList()
+	{
+		LinkedList<BiomeGenBase> linkedlist = new LinkedList<BiomeGenBase>();
+		
+		Type[] t = { Type.FOREST, Type.PLAINS, Type.MOUNTAIN, Type.HILLS, Type.SWAMP, Type.MAGICAL,
+			Type.DESERT, Type.FROZEN, Type.JUNGLE, Type.WASTELAND, Type.BEACH, Type.MUSHROOM };
 
+		for (Type type : t) {
+			BiomeGenBase[] biomes = BiomeDictionary.getBiomesForType(type);
+			for (BiomeGenBase bgb : biomes) {
+				if (BiomeDictionary.isBiomeOfType(bgb, Type.WATER)) { // exclude ocean biomes
+					proxy.print("  <<< Excluding " + bgb.biomeName + " for spawning");
+					continue;
+				}
+				if (!linkedlist.contains(bgb)) {
+                    proxy.print("  >>> Adding " + bgb.biomeName + " for spawning");
+					linkedlist.add(bgb);
+				}
+			}
+		}
+		return (BiomeGenBase[]) linkedlist.toArray(new BiomeGenBase[0]);
+	}
+	
+	public void printBiomeList(BiomeGenBase[] biomes)
+	{
+		for (BiomeGenBase bgb : biomes) {
+			proxy.print("  >>> Including biome " + bgb.biomeName + " for spawning");
+		}
+	}
+	
 	public int getZombieSpawns()
 	{
 		return zombieSpawns;

@@ -79,7 +79,7 @@ public class EntityCrackedZombie extends EntityMob {
 			tasks.addTask(6, new EntityAIBreakDoor(this));
 		}
 		tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
-		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0, false));
+		tasks.addTask(3, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.2, false));
 		tasks.addTask(4, new EntityAIAttackOnCollide(this, EntityVillager.class, 1.0, true));
 		tasks.addTask(5, new EntityAIAttackOnCollide(this, EntityChicken.class, 1.0, false));
 		tasks.addTask(6, new EntityAIAttackOnCollide(this, EntityPig.class, 1.0, false));
@@ -100,7 +100,7 @@ public class EntityCrackedZombie extends EntityMob {
 	{
 		super.applyEntityAttributes();
 		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(40.0); // follow range
-		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.23); // movement speed
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25); // movement speed
 		getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0);  // attack damage
 		getAttributeMap().registerAttribute(field_110186_bp).setBaseValue(rand.nextDouble() * 0.1); // reinforcements
 	}

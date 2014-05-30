@@ -120,23 +120,11 @@ public class RenderCrackedZombie extends RenderBiped {
 		return super.shouldRenderPass(entityLiving, par2, par3);
 	}
 
-//	@Override
-//	public void doRender(Entity entity, double x, double y, double z, float par8, float par9)
-//	{
-//		this.doRender((EntityCrackedZombie) entity, x, y, z, par8, par9);
-//	}
-	
 	@Override
 	public void doRender(EntityLiving entity, double x, double y, double z, float par8, float par9)
 	{
 		this.doRender((EntityCrackedZombie) entity, x, y, z, par8, par9);
 	}
-	
-//	@Override
-//	public void doRender(EntityLivingBase entity, double x, double y, double z, float par8, float par9)
-//	{
-//		this.doRender((EntityCrackedZombie) entity, x, y, z, par8, par9);
-//	}
 	
 	public void doRender(EntityCrackedZombie entity, double x, double y, double z, float par8, float par9)
 	{

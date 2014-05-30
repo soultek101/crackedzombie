@@ -61,7 +61,7 @@ import net.minecraft.world.World;
 
 public class EntityCrackedZombie extends EntityMob {
 
-	protected static final RangedAttribute field_110186_bp = (new RangedAttribute("zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).setDescription("Spawn Reinforcements Chance");
+	protected static final RangedAttribute reinforcements = (new RangedAttribute("zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).setDescription("Spawn Reinforcements Chance");
 	private static final UUID uuid = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
 	private static final AttributeModifier speedBoost = new AttributeModifier(uuid, "Baby speed boost", 0.1D, 0);
 
@@ -92,6 +92,8 @@ public class EntityCrackedZombie extends EntityMob {
 		targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityChicken.class, 8, false));
 		targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPig.class, 8, false));
 
+		setSize(0.6F, 1.8F);
+
 //		rand = new Random(System.currentTimeMillis());
 	}
 
@@ -102,7 +104,7 @@ public class EntityCrackedZombie extends EntityMob {
 		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(40.0); // follow range
 		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25); // movement speed
 		getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0);  // attack damage
-		getAttributeMap().registerAttribute(field_110186_bp).setBaseValue(rand.nextDouble() * 0.1); // reinforcements
+		getAttributeMap().registerAttribute(reinforcements).setBaseValue(rand.nextDouble() * 0.1); // reinforcements
 	}
 
 	// used in model rendering, arms hang down when wandering about
@@ -173,7 +175,7 @@ public class EntityCrackedZombie extends EntityMob {
 				entitylivingbase = (EntityLivingBase) damageSource.getEntity();
 			}
 
-			if (entitylivingbase != null && worldObj.difficultySetting.getDifficultyId() >= EnumDifficulty.NORMAL.getDifficultyId() && (double) rand.nextFloat() < getEntityAttribute(field_110186_bp).getAttributeValue()) {
+			if (entitylivingbase != null && worldObj.difficultySetting.getDifficultyId() >= EnumDifficulty.NORMAL.getDifficultyId() && (double) rand.nextFloat() < getEntityAttribute(reinforcements).getAttributeValue()) {
 				int i = MathHelper.floor_double(posX);
 				int j = MathHelper.floor_double(posY);
 				int k = MathHelper.floor_double(posZ);
@@ -191,14 +193,36 @@ public class EntityCrackedZombie extends EntityMob {
 							this.worldObj.spawnEntityInWorld(crackedZombie);
 							crackedZombie.setAttackTarget(entitylivingbase);
 							crackedZombie.onSpawnWithEgg(null);
-							getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
-							crackedZombie.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
+							getEntityAttribute(reinforcements).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
+							crackedZombie.getEntityAttribute(reinforcements).applyModifier(new AttributeModifier("Zombie reinforcement callee charge", -0.05000000074505806D, 0));
 							break;
 						}
 					}
 				}
 			}
 
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean attackEntityAsMob(Entity entity)
+	{
+		if (super.attackEntityAsMob(entity)) {
+			if (entity instanceof EntityLivingBase) {
+				byte strength = 0;
+
+				if (worldObj.difficultySetting == EnumDifficulty.NORMAL) {
+					strength = 7;
+				} else if (worldObj.difficultySetting == EnumDifficulty.HARD) {
+					strength = 15;
+				}
+
+				if (strength > 0) {
+					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(Potion.poison.id, strength * 20, 0));
+				}
+			}
 			return true;
 		}
 		return false;
@@ -228,13 +252,13 @@ public class EntityCrackedZombie extends EntityMob {
 				}
 			}
 		}
-		
-		this.updateArmSwingProgress();
-        float f = this.getBrightness(1.0F);
 
-        if (f > 0.5F) {
-            this.entityAge += 2;
-        }
+		updateArmSwingProgress();
+		float brightness = getBrightness(1.0F);
+
+		if (brightness > 0.5F) {
+			entityAge += 2;
+		}
 		super.onLivingUpdate();
 	}
 
@@ -253,12 +277,15 @@ public class EntityCrackedZombie extends EntityMob {
 
 		boolean notColliding = worldObj.getCollidingBoundingBoxes(this, boundingBox).isEmpty();
 		boolean isLiquid = worldObj.isAnyLiquid(boundingBox);
-		// spawns on grass, sand and very occasionally spawn on stone
+		// spawns on grass, sand, dirt, clay and very occasionally spawn on stone
 		boolean isGrass = worldObj.getBlock(x, y - 1, z) == Blocks.grass;
 		boolean isSand = worldObj.getBlock(x, y - 1, z) == Blocks.sand;
-		boolean isStone = (rand.nextInt(16) == 0) && (worldObj.getBlock(x, y - 1, z) == Blocks.stone);
+		boolean isClay = worldObj.getBlock(x, y - 1, z) == Blocks.hardened_clay;
+		boolean isStainedClay = worldObj.getBlock(x, y - 1, z) == Blocks.stained_hardened_clay;
+		boolean isDirt = worldObj.getBlock(x, y - 1, z) == Blocks.dirt;
+		boolean isStone = (rand.nextInt(8) == 0) && (worldObj.getBlock(x, y - 1, z) == Blocks.stone);
 
-		return (isGrass || isSand || isStone) && notColliding && !isLiquid;
+		return (isGrass || isSand || isStone || isClay || isStainedClay || isDirt) && notColliding && !isLiquid;
 	}
 
 	@Override
@@ -285,7 +312,7 @@ public class EntityCrackedZombie extends EntityMob {
 	@Override
 	protected boolean canDespawn()
 	{
-		return true;
+		return !isConverting();
 	}
 
 	@Override

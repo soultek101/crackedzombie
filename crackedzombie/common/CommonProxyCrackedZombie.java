@@ -22,7 +22,7 @@
 package com.crackedzombie.common;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.FMLCommonHandler;
+//import cpw.mods.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.Logger;
 
 public class CommonProxyCrackedZombie {
@@ -35,7 +35,7 @@ public class CommonProxyCrackedZombie {
 	
 	public void registerWorldHandler()
 	{
-		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
+//		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
 	
 	public void print(String s)

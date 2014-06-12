@@ -72,6 +72,8 @@ public class CrackedZombie {
 	private boolean randomSkins;
 	private boolean doorBusting;
 	private boolean sickness;
+	private int minSpawn;
+	private int maxSpawn;
 
 	
 	@SidedProxy(
@@ -106,6 +108,8 @@ public class CrackedZombie {
 		String doorBustingComment = "doorBusting, set to true to have zombies try to break down doors,\n"
 				+ "otherwise set to false. It's quieter.";
 		String sicknessComment = "Sickness, set to true to have contact with zombies poison the player.";
+		String minSpawnComment = "minSpawn, minimum number of crackedzombies per spawn event";
+		String maxSpawnComment = "maxSpawn, maximum number of crackedzombies per spawn event";
 
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -120,6 +124,8 @@ public class CrackedZombie {
 		spawnWitches = config.get(Configuration.CATEGORY_GENERAL, "spawnWitches", true, witchComment).getBoolean(true);
 		doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
 		sickness = config.get(Configuration.CATEGORY_GENERAL, "sickness", false, sicknessComment).getBoolean(false);
+		minSpawn = config.get(Configuration.CATEGORY_GENERAL, "minSpawn", 2, minSpawnComment).getInt();
+		maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "maxSpawn", 10, maxSpawnComment).getInt();
 
 		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
 
@@ -153,7 +159,7 @@ public class CrackedZombie {
 		BiomeGenBase[] allBiomes = Iterators.toArray(Iterators.filter(Iterators.forArray(BiomeGenBase.getBiomeGenArray()),	Predicates.notNull()), BiomeGenBase.class);
 		printBiomeList(allBiomes);
 
-		EntityRegistry.addSpawn(EntityCrackedZombie.class, zombieSpawnProb, 2, 10, EnumCreatureType.monster, allBiomes);
+		EntityRegistry.addSpawn(EntityCrackedZombie.class, zombieSpawnProb, minSpawn, maxSpawn, EnumCreatureType.monster, allBiomes);
 		
 		// remove zombie spawning, we are replacing Minecraft zombies with CrackedZombies!
 		if (!zombieSpawns) {

@@ -53,7 +53,7 @@ import net.minecraftforge.common.config.Configuration;
 
 public class CrackedZombie {
 
-	public static final String version = "1.7.2";
+	public static final String version = "1.7.10";
 	public static final String modid = "crackedzombiemod";
 	public static final String name = "Cracked Zombie Mod";
 	public static final String zombieName = "CrackedZombie";

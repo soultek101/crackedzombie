@@ -133,7 +133,7 @@ public class CrackedZombie {
 
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityCrackedZombie.class, zombieName, id, 0x00AFAF, 0x799C45);
-		EntityRegistry.registerModEntity(EntityCrackedZombie.class, zombieName, id, this, 80, 3, true);
+//		EntityRegistry.registerModEntity(EntityCrackedZombie.class, zombieName, id, this, 80, 3, true);
 
 		proxy.registerRenderers();
 //		proxy.registerWorldHandler();

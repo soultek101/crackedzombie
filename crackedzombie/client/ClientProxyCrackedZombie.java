@@ -23,7 +23,9 @@ package com.crackedzombie.client;
 
 import com.crackedzombie.common.CommonProxyCrackedZombie;
 import com.crackedzombie.common.EntityCrackedZombie;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 //import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 //import cpw.mods.fml.client.FMLClientHandler;
 
@@ -32,7 +34,8 @@ public class ClientProxyCrackedZombie extends CommonProxyCrackedZombie {
 	@Override
 	public void registerRenderers()
 	{
-		RenderingRegistry.registerEntityRenderingHandler(EntityCrackedZombie.class, new RenderCrackedZombie());
+		RenderManager rm = Minecraft.getMinecraft().getRenderManager();
+		RenderingRegistry.registerEntityRenderingHandler(EntityCrackedZombie.class, new RenderCrackedZombie(rm));
 	}
 	
 }

@@ -21,13 +21,13 @@ package com.crackedzombie.common;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -135,13 +135,14 @@ public class CrackedZombie {
 		EntityRegistry.registerGlobalEntityID(EntityCrackedZombie.class, zombieName, id, 0x00AFAF, 0x799C45);
 //		EntityRegistry.registerModEntity(EntityCrackedZombie.class, zombieName, id, this, 80, 3, true);
 
-		proxy.registerRenderers();
+//		proxy.registerRenderers();
 //		proxy.registerWorldHandler();
 	}
 
 	@EventHandler
 	public void Init(FMLInitializationEvent evt)
 	{
+		proxy.registerRenderers();
 		// zombies should spawn in dungeon spawners
 		DungeonHooks.addDungeonMob(zombieName, 200);
 		// add steel swords to the loot. you may need these.
@@ -159,12 +160,12 @@ public class CrackedZombie {
 		BiomeGenBase[] allBiomes = Iterators.toArray(Iterators.filter(Iterators.forArray(BiomeGenBase.getBiomeGenArray()),	Predicates.notNull()), BiomeGenBase.class);
 		printBiomeList(allBiomes);
 
-		EntityRegistry.addSpawn(EntityCrackedZombie.class, zombieSpawnProb, minSpawn, maxSpawn, EnumCreatureType.monster, allBiomes);
+		EntityRegistry.addSpawn(EntityCrackedZombie.class, zombieSpawnProb, minSpawn, maxSpawn, EnumCreatureType.MONSTER, allBiomes);
 		
 		// remove zombie spawning, we are replacing Minecraft zombies with CrackedZombies!
 		if (!zombieSpawns) {
 			proxy.print("*** Disabling default zombie spawns for all biomes");
-			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.MONSTER, allBiomes);
 			DungeonHooks.removeDungeonMob("Zombie");
 		} else {
 			proxy.print("NOT disabling default zombie spawns, there will be fewer crackedZombies!");
@@ -172,30 +173,30 @@ public class CrackedZombie {
 		
 		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
 		if (!spawnCreepers) {
-			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.MONSTER, allBiomes);
 			proxy.print("*** Removing creeper spawns");
 		}
 		if (!spawnSkeletons) {
-			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.MONSTER, allBiomes);
 			DungeonHooks.removeDungeonMob("Skeleton");
 			proxy.print("*** Removing skeleton spawns and dungeon spawners");
 		}
 		if (!spawnEnderman) {
-			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.MONSTER, allBiomes);
 			proxy.print("*** Removing enderman spawns");
 		}
 		if (!spawnSpiders) {
-			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.MONSTER, allBiomes);
 			DungeonHooks.removeDungeonMob("Spider");
 			proxy.print("*** Removing spider spawns and dungeon spawners");
 		}
 		if (!spawnSlime) {
-			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.MONSTER, allBiomes);
 			proxy.print("*** Removing slime spawns");
 		}
 		
 		if (!spawnWitches) {
-			EntityRegistry.removeSpawn(EntityWitch.class, EnumCreatureType.monster, allBiomes);
+			EntityRegistry.removeSpawn(EntityWitch.class, EnumCreatureType.MONSTER, allBiomes);
 			proxy.print("*** Removing witch spawns");
 		}
 	}

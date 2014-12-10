@@ -21,7 +21,7 @@
 //
 package com.crackedzombie.common;
 
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLLog;
 //import cpw.mods.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.Logger;
 

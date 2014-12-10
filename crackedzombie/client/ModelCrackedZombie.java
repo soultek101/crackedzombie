@@ -20,8 +20,8 @@
 package com.crackedzombie.client;
 
 import com.crackedzombie.common.EntityCrackedZombie;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -52,8 +52,8 @@ public class ModelCrackedZombie extends ModelBiped {
 	{
 		super.setRotationAngles(par1, par2, par3, par4, par5, par6, entity);
 
-		float rightArmRotation = MathHelper.sin(onGround * (float) Math.PI);
-		float leftARmRotation = MathHelper.sin((1.0F - (1.0F - onGround) * (1.0F - onGround)) * (float) Math.PI);
+		float rightArmRotation = MathHelper.sin(swingProgress * (float) Math.PI);
+		float leftARmRotation = MathHelper.sin((1.0F - (1.0F - swingProgress) * (1.0F - swingProgress)) * (float) Math.PI);
 		bipedRightArm.rotateAngleZ = 0.0F;
 		bipedLeftArm.rotateAngleZ = 0.0F;
 		bipedRightArm.rotateAngleY = -(0.1F - rightArmRotation * 0.6F);

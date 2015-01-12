@@ -15,25 +15,24 @@
 //  =====================================================================
 //
 //
-//
-//
 // Copyright 2011-2015 Michael Sheppard (crackedEgg)
 //
 package com.crackedzombie.client;
 
-import com.crackedzombie.common.CommonProxyCrackedZombie;
-import com.crackedzombie.common.EntityCrackedZombie;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import com.crackedzombie.common.ConfigHandler;
+import com.crackedzombie.common.CrackedZombie;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.config.GuiConfig;
 
-public class ClientProxyCrackedZombie extends CommonProxyCrackedZombie {
+public class CrackedZombieConfigGUI extends GuiConfig {
 
-	@Override
-	public void registerRenderers()
+	public CrackedZombieConfigGUI(GuiScreen parentScreen)
 	{
-		RenderManager rm = Minecraft.getMinecraft().getRenderManager();
-		RenderingRegistry.registerEntityRenderingHandler(EntityCrackedZombie.class, new RenderCrackedZombie(rm));
+		super(parentScreen,
+				new ConfigElement(ConfigHandler.config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(),
+				CrackedZombie.modid, true, true, GuiConfig.getAbridgedConfigPath(ConfigHandler.config.toString()));
 	}
 	
 }

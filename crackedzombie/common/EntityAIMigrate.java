@@ -17,7 +17,7 @@
 //
 //
 //
-// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+// Copyright 2011-2015 Michael Sheppard (crackedEgg)
 //
 package com.crackedzombie.common;
 
@@ -33,11 +33,18 @@ public class EntityAIMigrate extends EntityAIBase {
 	private double yPosition;
 	private double zPosition;
 	private final double speed;
+	private int distance;
 
 	public EntityAIMigrate(EntityCreature entityCreature, double speed)
 	{
+		this(entityCreature, speed, 120);
+	}
+	
+	public EntityAIMigrate(EntityCreature entityCreature, double speed, int distance)
+	{
 		entity = entityCreature;
 		this.speed = speed;
+		this.distance = distance;
 		setMutexBits(1);
 	}
 
@@ -46,7 +53,7 @@ public class EntityAIMigrate extends EntityAIBase {
 	{
 		if (entity.getAge() > 600) {
 			return false;
-		} else if (entity.getRNG().nextInt(120) != 0) {
+		} else if (entity.getRNG().nextInt(distance) != 0) {
 			return false;
 		} else {
 			Vec3 vec = RandomPositionGenerator.findRandomTarget(entity, 16, 8);
@@ -74,17 +81,4 @@ public class EntityAIMigrate extends EntityAIBase {
 		entity.getNavigator().tryMoveToXYZ(xPosition, yPosition, zPosition, speed);
 	}
 	
-//	@Override
-//	public void resetTask()
-//    {
-//        if (entity.getNavigator().noPath() || entity.getDistanceSq(xPosition, yPosition, zPosition) < 16.0D) {
-//            Vec3 vec = RandomPositionGenerator.findRandomTarget(entity, 16, 8);
-//			if (vec != null) {
-//				xPosition = vec.xCoord;
-//				yPosition = vec.yCoord;
-//				zPosition = vec.zCoord;
-//			}
-//        }
-//    }
-
 }

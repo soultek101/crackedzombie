@@ -17,12 +17,11 @@
 //
 //
 //
-// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+// Copyright 2011-2015 Michael Sheppard (crackedEgg)
 //
 package com.crackedzombie.common;
 
 import net.minecraftforge.fml.common.FMLLog;
-//import cpw.mods.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.Logger;
 
 public class CommonProxyCrackedZombie {
@@ -35,11 +34,15 @@ public class CommonProxyCrackedZombie {
 	
 	public void registerWorldHandler()
 	{
-//		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
 	
-	public void print(String s)
+	public void info(String s)
 	{
 		logger.info(s);
+	}
+	
+	public void warn(String s)
+	{
+		logger.warn(s);
 	}
 }

@@ -2,7 +2,7 @@
 //  =====GPL=============================================================
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation; version 2 dated June, 1991.
+//  the Free Software Foundation; modversion 2 dated June, 1991.
 // 
 //  This program is distributed in the hope that it will be useful, 
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,14 +15,14 @@
 //  =====================================================================
 //
 //
-// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+// Copyright 2011-2015 Michael Sheppard (crackedEgg)
 //
 package com.crackedzombie.common;
 
+import static com.crackedzombie.common.ConfigHandler.updateConfigInfo;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -43,39 +43,23 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
-import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(
-		modid = CrackedZombie.modid,
-		name = CrackedZombie.name,
-		version = CrackedZombie.version
-)
+@Mod( modid = CrackedZombie.modid, name = CrackedZombie.name, version = CrackedZombie.modversion, guiFactory = CrackedZombie.guifactory )
 
 public class CrackedZombie {
 
-	public static final String version = "1.7.10";
+	public static final String modversion = "3.1.0";
 	public static final String modid = "crackedzombiemod";
 	public static final String name = "Cracked Zombie Mod";
 	public static final String zombieName = "CrackedZombie";
+	public static final String guifactory = "com.crackedzombie.client.CrackedZombieConfigGUIFactory";
 	
 	@Mod.Instance(modid)
 	public static CrackedZombie instance;
 
-	private int zombieSpawnProb;
-	private boolean zombieSpawns;
-	private boolean spawnCreepers;
-	private boolean spawnSkeletons;
-	private boolean spawnEnderman;
-	private boolean spawnSpiders;
-	private boolean spawnSlime;
-	private boolean spawnWitches;
-	private boolean randomSkins;
-	private boolean doorBusting;
-	private boolean sickness;
-	private int minSpawn;
-	private int maxSpawn;
-
-	
 	@SidedProxy(
 			clientSide = "com.crackedzombie.client.ClientProxyCrackedZombie",
 			serverSide = "com.crackedzombie.common.CommonProxyCrackedZombie"
@@ -83,144 +67,97 @@ public class CrackedZombie {
 
 	public static CommonProxyCrackedZombie proxy;
 
-	@EventHandler
+	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		String generalComments = CrackedZombie.name + " Config\nMichael Sheppard (crackedEgg)\n"
-				+ " For Minecraft Version " + CrackedZombie.version + "\n";
-		String spawnProbComment = "zombieSpawnProb adjust to probability of zombies spawning\n"
-				+ "The higher the number the more likely zombies will spawn.";
-		String zombieComment = "zombieSpawns allows/disallows default zombies spawns, default is false,\n"
-				+ "no default minecraft zombies will spawn. Only the " + zombieName + "s will spawn.\n"
-				+ "If set to true, fewer CrackedZombies will spawn.";
-		String creeperComment = "creeperSpawns, set to false to disable creeper spawning, set to true\n"
-				+ "if you want to spawn creepers";
-		String skeletonComment = "skeletonSpawns, set to false to disable skeleton spawning, set to true\n"
-				+ "if you want to spawn skeletons";
-		String endermanComment = "endermanSpawns, set to false to disable enderman spawning, set to true\n"
-				+ "if you want to spawn enderman";
-		String spiderComment = "spiderSpawns, set to false to disable spider spawning, set to true\n"
-				+ "if you want to spawn spiders";
-		String slimeComment = "slimeSpawns, set to false to disable slime spawning, set to true\n"
-				+ "if you want to spawn slimes";
-		String witchComment = "witchSpawns, set to false to disable witch spawning, set to true\n"
-				+ "if you want to spawn witches";
-		String doorBustingComment = "doorBusting, set to true to have zombies try to break down doors,\n"
-				+ "otherwise set to false. It's quieter.";
-		String sicknessComment = "Sickness, set to true to have contact with zombies poison the player.";
-		String minSpawnComment = "minSpawn, minimum number of crackedzombies per spawn event";
-		String maxSpawnComment = "maxSpawn, maximum number of crackedzombies per spawn event";
-
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		config.load();
-
-		zombieSpawnProb = config.get(Configuration.CATEGORY_GENERAL, "zombieSpawnProb", 15, spawnProbComment).getInt();
-		zombieSpawns = config.get(Configuration.CATEGORY_GENERAL, "zombieSpawns", false, zombieComment).getBoolean(false);
-		spawnCreepers = config.get(Configuration.CATEGORY_GENERAL, "spawnCreepers", false, creeperComment).getBoolean(false);
-		spawnSkeletons = config.get(Configuration.CATEGORY_GENERAL, "spawnSkeletons", false, skeletonComment).getBoolean(false);
-		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
-		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(true);
-		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
-		spawnWitches = config.get(Configuration.CATEGORY_GENERAL, "spawnWitches", true, witchComment).getBoolean(true);
-		doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
-		sickness = config.get(Configuration.CATEGORY_GENERAL, "sickness", false, sicknessComment).getBoolean(false);
-		minSpawn = config.get(Configuration.CATEGORY_GENERAL, "minSpawn", 2, minSpawnComment).getInt();
-		maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "maxSpawn", 10, maxSpawnComment).getInt();
-
-		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
-
-		config.save();
+		ConfigHandler.startConfig(event);
 
 		int id = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityCrackedZombie.class, zombieName, id, 0x00AFAF, 0x799C45);
-//		EntityRegistry.registerModEntity(EntityCrackedZombie.class, zombieName, id, this, 80, 3, true);
-
-//		proxy.registerRenderers();
-//		proxy.registerWorldHandler();
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void Init(FMLInitializationEvent evt)
 	{
+		FMLCommonHandler.instance().bus().register(CrackedZombie.instance);
+		
 		proxy.registerRenderers();
 		// zombies should spawn in dungeon spawners
 		DungeonHooks.addDungeonMob(zombieName, 200);
 		// add steel swords to the loot. you may need these.
 		ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(Items.iron_sword), 1, 1, 4));
-		
-//		FMLCommonHandler.instance().bus().register(new WorldTickHandler());
 	}
 	
-    @EventHandler
+    @Mod.EventHandler
 	public void PostInit(FMLPostInitializationEvent event)
 	{
 		BiomeDictionary.registerAllBiomesAndGenerateEvents();
 		
-		proxy.print("*** Scanning for available biomes");
+		proxy.info("*** Scanning for available biomes");
 		BiomeGenBase[] allBiomes = Iterators.toArray(Iterators.filter(Iterators.forArray(BiomeGenBase.getBiomeGenArray()),	Predicates.notNull()), BiomeGenBase.class);
 		printBiomeList(allBiomes);
 
+		int zombieSpawnProb = ConfigHandler.getZombieSpawnProbility();
+		int minSpawn = ConfigHandler.getMinSpawn();
+		int maxSpawn = ConfigHandler.getMaxSpawn();
 		EntityRegistry.addSpawn(EntityCrackedZombie.class, zombieSpawnProb, minSpawn, maxSpawn, EnumCreatureType.MONSTER, allBiomes);
 		
 		// remove zombie spawning, we are replacing Minecraft zombies with CrackedZombies!
-		if (!zombieSpawns) {
-			proxy.print("*** Disabling default zombie spawns for all biomes");
+		if (!ConfigHandler.getZombieSpawns()) {
+			proxy.info("*** Disabling default zombie spawns for all biomes");
 			EntityRegistry.removeSpawn(EntityZombie.class, EnumCreatureType.MONSTER, allBiomes);
 			DungeonHooks.removeDungeonMob("Zombie");
 		} else {
-			proxy.print("NOT disabling default zombie spawns, there will be fewer crackedZombies!");
+			proxy.info("NOT disabling default zombie spawns, there will be fewer crackedZombies!");
 		}
 		
-		// optionally remove creeper, skeleton, enderman, spaiders and slime spawns for these biomes
-		if (!spawnCreepers) {
+		// optionally remove creeper, skeleton, enderman, spiders and slime spawns for these biomes
+		if (!ConfigHandler.getSpawnCreepers()) {
 			EntityRegistry.removeSpawn(EntityCreeper.class, EnumCreatureType.MONSTER, allBiomes);
-			proxy.print("*** Removing creeper spawns");
+			proxy.info("*** Removing creeper spawns");
 		}
-		if (!spawnSkeletons) {
+		if (!ConfigHandler.getSpawnSkeletons()) {
 			EntityRegistry.removeSpawn(EntitySkeleton.class, EnumCreatureType.MONSTER, allBiomes);
 			DungeonHooks.removeDungeonMob("Skeleton");
-			proxy.print("*** Removing skeleton spawns and dungeon spawners");
+			proxy.info("*** Removing skeleton spawns and dungeon spawners");
 		}
-		if (!spawnEnderman) {
+		if (!ConfigHandler.getSpawnEnderman()) {
 			EntityRegistry.removeSpawn(EntityEnderman.class, EnumCreatureType.MONSTER, allBiomes);
-			proxy.print("*** Removing enderman spawns");
+			proxy.info("*** Removing enderman spawns");
 		}
-		if (!spawnSpiders) {
+		if (!ConfigHandler.getSpawnSpiders()) {
 			EntityRegistry.removeSpawn(EntitySpider.class, EnumCreatureType.MONSTER, allBiomes);
 			DungeonHooks.removeDungeonMob("Spider");
-			proxy.print("*** Removing spider spawns and dungeon spawners");
+			proxy.info("*** Removing spider spawns and dungeon spawners");
 		}
-		if (!spawnSlime) {
+		if (!ConfigHandler.getSpawnSlime()) {
 			EntityRegistry.removeSpawn(EntitySlime.class, EnumCreatureType.MONSTER, allBiomes);
-			proxy.print("*** Removing slime spawns");
+			proxy.info("*** Removing slime spawns");
 		}
 		
-		if (!spawnWitches) {
+		if (!ConfigHandler.getSpawnWitches()) {
 			EntityRegistry.removeSpawn(EntityWitch.class, EnumCreatureType.MONSTER, allBiomes);
-			proxy.print("*** Removing witch spawns");
+			proxy.info("*** Removing witch spawns");
 		}
 	}
 	
 	public void printBiomeList(BiomeGenBase[] biomes)
 	{
 		for (BiomeGenBase bgb : biomes) {
-			proxy.print("  >>> Including biome " + bgb.biomeName + " for spawning");
+			proxy.info("  >>> Including biome " + bgb.biomeName + " for spawning");
 		}
 	}
 	
-	public boolean getRandomSkins()
-	{
-		return randomSkins;
-	}
-
-	public boolean getDoorBusting()
-	{
-		return doorBusting;
-	}
+	// user has changed entries in the GUI config. save the results.
+	@SubscribeEvent
+    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (event.modID.equals(CrackedZombie.modid)) {
+			if (event.requiresMcRestart) {
+				CrackedZombie.proxy.info("The configuration changes require a Minecraft restart!");
+			}
+			CrackedZombie.proxy.info("Configuration changes have been updated for the " + CrackedZombie.name);
+            updateConfigInfo();
+		}
+    }
 	
-	public boolean getSickness()
-	{
-		return sickness;
-	}
-
 }

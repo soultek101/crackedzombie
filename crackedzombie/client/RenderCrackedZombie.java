@@ -16,7 +16,7 @@
 //
 //
 //
-// Copyright 2011-2014 Michael Sheppard (crackedEgg)
+// Copyright 2011-2015 Michael Sheppard (crackedEgg)
 //
 package com.crackedzombie.client;
 
@@ -46,79 +46,40 @@ public class RenderCrackedZombie extends RenderBiped {
 	protected ModelBiped childCrackedZombie;
 	protected ModelBiped adultZombieVillager;
 	protected ModelBiped childZombieVillager;
-//	private int nZombieVillagers = 1;
 	private final List list1;
 	private final List list2;
 
 	private static final ResourceLocation zombieSkin = new ResourceLocation("textures/entity/zombie/zombie.png");
-    private static final ResourceLocation zombieVillagerSkin = new ResourceLocation("textures/entity/zombie/zombie_villager.png");
-	
+	private static final ResourceLocation zombieVillagerSkin = new ResourceLocation("textures/entity/zombie/zombie_villager.png");
 
-	@SuppressWarnings( {"unchecked", "unchecked", "unchecked"})
+	@SuppressWarnings("unchecked")
 	public RenderCrackedZombie(RenderManager rm)
 	{
 		super(rm, new ModelCrackedZombie(), 0.5F, 1.0F);
-		LayerRenderer layerrenderer = (LayerRenderer)this.field_177097_h.get(0);
-        currentModel = this.modelBipedMain;
-        zombieVillager = new ModelCrackedZombieVillager();
-        this.addLayer(new LayerHeldItem(this));
-        LayerBipedArmor layerbipedarmor = new LayerBipedArmor(this)
-        {
+		LayerRenderer layerrenderer = (LayerRenderer) this.layerRenderers.get(0);
+		currentModel = modelBipedMain;
+		zombieVillager = new ModelCrackedZombieVillager();
+		addLayer(new LayerHeldItem(this));
+		LayerBipedArmor layerbipedarmor = new LayerBipedArmor(this) {
 			@Override
-            protected void func_177177_a()
-            {
-                childCrackedZombie = new ModelCrackedZombie(0.5F, true);
-                adultCrackedZombie = new ModelCrackedZombie(1.0F, true);
-            }
-        };
-        this.addLayer(layerbipedarmor);
-        this.list1 = Lists.newArrayList(this.field_177097_h);
+			protected void func_177177_a()
+			{
+				childCrackedZombie = new ModelCrackedZombie(0.5F, true);
+				adultCrackedZombie = new ModelCrackedZombie(1.0F, true);
+			}
+		};
+		addLayer(layerbipedarmor);
+		list1 = Lists.newArrayList(layerRenderers);
 
-        if (layerrenderer instanceof LayerCustomHead)
-        {
-            this.func_177089_b(layerrenderer);
-            this.addLayer(new LayerCustomHead(zombieVillager.bipedHead));
-        }
+		if (layerrenderer instanceof LayerCustomHead) {
+			removeLayer(layerrenderer);
+			addLayer(new LayerCustomHead(zombieVillager.bipedHead));
+		}
 
-        this.func_177089_b(layerbipedarmor);
-        this.addLayer(new LayerVillagerArmor(this));
-        list2 = Lists.newArrayList(this.field_177097_h);
-//		currentModel = modelBipedMain;
-//		zombieVillager = new ModelCrackedZombieVillager();
+		removeLayer(layerbipedarmor);
+		addLayer(new LayerVillagerArmor(this));
+		list2 = Lists.newArrayList(layerRenderers);
 	}
-
-//	@Override
-//	protected void func_82421_b()
-//	{
-//		field_82423_g = new ModelCrackedZombie(1.0F, true);
-//		field_82425_h = new ModelCrackedZombie(0.5F, true);
-//		adultCrackedZombie = field_82423_g;
-//		childCrackedZombie = field_82425_h;
-//		adultZombieVillager = new ModelCrackedZombieVillager(1.0F, 0.0F, true);
-//		childZombieVillager = new ModelCrackedZombieVillager(0.5F, 0.0F, true);
-//	}
-
-//	private void func_82427_a(EntityCrackedZombie entityCrackedZombie)
-//	{
-//		if (entityCrackedZombie.isVillager()) {
-//			if (nZombieVillagers != zombieVillager.getMaxCrackedZombieVillagers()) {
-//				zombieVillager = new ModelCrackedZombieVillager();
-//				nZombieVillagers = zombieVillager.getMaxCrackedZombieVillagers();
-//				adultZombieVillager = new ModelCrackedZombieVillager(1.0F, 0.0F, true);
-//				childZombieVillager = new ModelCrackedZombieVillager(0.5F, 0.0F, true);
-//			}
-//
-//			mainModel = zombieVillager;
-//			field_82423_g = adultZombieVillager;
-//			field_82425_h = childZombieVillager;
-//		} else {
-//			mainModel = currentModel;
-//			field_82423_g = adultCrackedZombie;
-//			field_82425_h = childCrackedZombie;
-//		}
-//
-//		modelBipedMain = (ModelBiped) mainModel;
-//	}
 
 	protected void rotateCorpse(EntityCrackedZombie entityCrackedZombie, float par2, float par3, float par4)
 	{
@@ -127,6 +88,19 @@ public class RenderCrackedZombie extends RenderBiped {
 		}
 
 		super.rotateCorpse(entityCrackedZombie, par2, par3, par4);
+	}
+
+	private void getRenderLayer(EntityCrackedZombie zombie)
+	{
+		if (zombie.isVillager()) {
+			mainModel = adultZombieVillager;
+			layerRenderers = list1;
+		} else {
+			mainModel = currentModel;
+			layerRenderers = list2;
+		}
+
+		modelBipedMain = (ModelBiped)mainModel;
 	}
 
 	@Override
@@ -140,36 +114,22 @@ public class RenderCrackedZombie extends RenderBiped {
 	{
 		return func_180578_a((EntityCrackedZombie) entity);
 	}
-	
-	protected ResourceLocation func_180578_a(EntityCrackedZombie entity)
-    {
-        return entity.isVillager() ? zombieVillagerSkin : zombieSkin;
-    }
 
-//	@Override
-//	protected void renderEquippedItems(EntityLivingBase entityLiving, float par2)
-//	{
-//		setModel((EntityCrackedZombie) entityLiving);
-//		super.renderEquippedItems(entityLiving, par2);
-//	}
-//
-//	@Override
-//	protected int shouldRenderPass(EntityLiving entityLiving, int par2, float par3)
-//	{
-//		setModel((EntityCrackedZombie) entityLiving);
-//		return super.shouldRenderPass(entityLiving, par2, par3);
-//	}
+	protected ResourceLocation func_180578_a(EntityCrackedZombie entity)
+	{
+		return entity.isVillager() ? zombieVillagerSkin : zombieSkin;
+	}
 
 	@Override
 	public void doRender(EntityLiving entity, double x, double y, double z, float par8, float par9)
 	{
 		this.doRender((EntityCrackedZombie) entity, x, y, z, par8, par9);
 	}
-	
+
 	public void doRender(EntityCrackedZombie entity, double x, double y, double z, float par8, float par9)
 	{
-//		setModel(entity);
-		super.doRender((EntityLiving)entity, x, y, z, par8, par9);
+		getRenderLayer(entity);
+		super.doRender((EntityLiving) entity, x, y, z, par8, par9);
 	}
 
 }

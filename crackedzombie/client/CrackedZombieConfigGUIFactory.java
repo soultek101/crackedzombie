@@ -15,25 +15,39 @@
 //  =====================================================================
 //
 //
-//
-//
 // Copyright 2011-2015 Michael Sheppard (crackedEgg)
 //
 package com.crackedzombie.client;
 
-import com.crackedzombie.common.CommonProxyCrackedZombie;
-import com.crackedzombie.common.EntityCrackedZombie;
+import java.util.Set;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.client.IModGuiFactory;
 
-public class ClientProxyCrackedZombie extends CommonProxyCrackedZombie {
+public class CrackedZombieConfigGUIFactory implements IModGuiFactory {
 
 	@Override
-	public void registerRenderers()
+	public void initialize(Minecraft minecraft)
 	{
-		RenderManager rm = Minecraft.getMinecraft().getRenderManager();
-		RenderingRegistry.registerEntityRenderingHandler(EntityCrackedZombie.class, new RenderCrackedZombie(rm));
+		
+	}
+
+	@Override
+	public Class<? extends GuiScreen> mainConfigGuiClass()
+	{
+		return CrackedZombieConfigGUI.class;
+	}
+
+	@Override
+	public Set<IModGuiFactory.RuntimeOptionCategoryElement> runtimeGuiCategories()
+	{
+		return null;
+	}
+
+	@Override
+	public IModGuiFactory.RuntimeOptionGuiHandler getHandlerFor(IModGuiFactory.RuntimeOptionCategoryElement roce)
+	{
+		return null;
 	}
 	
 }

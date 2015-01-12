@@ -32,7 +32,8 @@ public class CrackedZombieConfigGUI extends GuiConfig {
 	{
 		super(parentScreen,
 				new ConfigElement(ConfigHandler.config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(),
-				CrackedZombie.modid, true, true, GuiConfig.getAbridgedConfigPath(ConfigHandler.config.toString()));
+				CrackedZombie.modid, true, true, GuiConfig.getAbridgedConfigPath(ConfigHandler.config.toString()),
+				"Changes here require a restart before they take effect!");
 	}
 	
 }

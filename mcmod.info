@@ -1,0 +1,17 @@
+[
+	{
+		"modid": "crackedzombiemod",
+		"name": "CrackedZombie Mod",
+		"description": "Cracked Zombie mod adds zombies in the day time!",
+		"version": $version,
+		"mcversion": $mcversion,
+		"url": "",
+		"updateUrl": "",
+		"authorList": [ "crackedEgg" ],
+		"credits": "Created by crackedEgg",
+		"logoFile": "pack.png",
+		"screenshots": [],
+		"parent": "",
+		"dependencies": [ "mod_MinecraftForge" ]
+	}
+]

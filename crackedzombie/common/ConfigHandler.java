@@ -41,26 +41,26 @@ public class ConfigHandler {
 	private static int maxSpawn;
 	
 	static final String generalComments = CrackedZombie.name + " Config\nMichael Sheppard (crackedEgg)\n"
-				+ " For Minecraft Version " + CrackedZombie.modversion + "\n";
+				+ " For Minecraft Version " + CrackedZombie.mcversion + "\n";
 	static final String spawnProbComment = "zombieSpawnProb adjust to probability of zombies spawning\n"
 			+ "The higher the number the more likely zombies will spawn.";
-	static final String zombieComment = "zombieSpawns allows/disallows default zombies spawns, default is false,\n"
-			+ "no default minecraft zombies will spawn. Only the " + zombieName + "s will spawn.\n"
-			+ "If set to true, fewer CrackedZombies will spawn.";
-	static final String creeperComment = "creeperSpawns, set to false to disable creeper spawning, set to true\n"
-			+ "if you want to spawn creepers";
-	static final String skeletonComment = "skeletonSpawns, set to false to disable skeleton spawning, set to true\n"
-			+ "if you want to spawn skeletons";
-	static final String endermanComment = "endermanSpawns, set to false to disable enderman spawning, set to true\n"
-			+ "if you want to spawn enderman";
-	static final String spiderComment = "spiderSpawns, set to false to disable spider spawning, set to true\n"
-			+ "if you want to spawn spiders";
-	static final String slimeComment = "slimeSpawns, set to false to disable slime spawning, set to true\n"
-			+ "if you want to spawn slimes";
-	static final String witchComment = "witchSpawns, set to false to disable witch spawning, set to true\n"
-			+ "if you want to spawn witches";
-	static final String doorBustingComment = "doorBusting, set to true to have zombies try to break down doors,\n"
-			+ "otherwise set to false. It's quieter.";
+	static final String zombieComment = "zombieSpawns allows/disallows default zombies spawns, default is false,"
+			+ " no default minecraft zombies will spawn. Only the " + zombieName + "s will spawn."
+			+ " If set to true, fewer CrackedZombies will spawn.";
+	static final String creeperComment = "creeperSpawns, set to false to disable creeper spawning, set to true"
+			+ " if you want to spawn creepers";
+	static final String skeletonComment = "skeletonSpawns, set to false to disable skeleton spawning, set to true"
+			+ " if you want to spawn skeletons";
+	static final String endermanComment = "endermanSpawns, set to false to disable enderman spawning, set to true"
+			+ " if you want to spawn enderman";
+	static final String spiderComment = "spiderSpawns, set to false to disable spider spawning, set to true"
+			+ " if you want to spawn spiders";
+	static final String slimeComment = "slimeSpawns, set to false to disable slime spawning, set to true"
+			+ " if you want to spawn slimes";
+	static final String witchComment = "witchSpawns, set to false to disable witch spawning, set to true"
+			+ " if you want to spawn witches";
+	static final String doorBustingComment = "doorBusting, set to true to have zombies try to break down doors,"
+			+ " otherwise set to false. It's quieter.";
 	static final String sicknessComment = "Sickness, set to true to have contact with zombies poison the player.";
 	static final String minSpawnComment = "minSpawn, minimum number of crackedzombies per spawn event";
 	static final String maxSpawnComment = "maxSpawn, maximum number of crackedzombies per spawn event";

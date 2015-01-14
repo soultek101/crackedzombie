@@ -19,7 +19,6 @@
 //
 package com.crackedzombie.common;
 
-import static com.crackedzombie.common.CrackedZombie.zombieName;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -41,12 +40,12 @@ public class ConfigHandler {
 	private static int maxSpawn;
 	
 	static final String generalComments = CrackedZombie.name + " Config\nMichael Sheppard (crackedEgg)\n"
-				+ " For Minecraft Version " + CrackedZombie.mcversion + "\n";
+				+ "For Minecraft Version " + CrackedZombie.mcversion + "\n";
 	static final String spawnProbComment = "zombieSpawnProb adjust to probability of zombies spawning\n"
 			+ "The higher the number the more likely zombies will spawn.";
-	static final String zombieComment = "zombieSpawns allows/disallows default zombies spawns, default is false,"
-			+ " no default minecraft zombies will spawn. Only the " + zombieName + "s will spawn."
-			+ " If set to true, fewer CrackedZombies will spawn.";
+	static final String zombieComment = "zombieSpawns allows/disallows vanilla zombies spawns, default is false\n,"
+			+ " no vanilla minecraft zombies will spawn. Only the " + CrackedZombie.zombieName + "s will spawn.\n"
+			+ " If set to true, fewer " + CrackedZombie.zombieName + "s will spawn.";
 	static final String creeperComment = "creeperSpawns, set to false to disable creeper spawning, set to true"
 			+ " if you want to spawn creepers";
 	static final String skeletonComment = "skeletonSpawns, set to false to disable skeleton spawning, set to true"
@@ -75,21 +74,19 @@ public class ConfigHandler {
 	public static void updateConfigInfo()
 	{
 		try {
-		zombieSpawnProb = config.get(Configuration.CATEGORY_GENERAL, "zombieSpawnProb", 5, spawnProbComment).getInt();
-		zombieSpawns = config.get(Configuration.CATEGORY_GENERAL, "zombieSpawns", false, zombieComment).getBoolean(false);
-		spawnCreepers = config.get(Configuration.CATEGORY_GENERAL, "spawnCreepers", false, creeperComment).getBoolean(false);
-		spawnSkeletons = config.get(Configuration.CATEGORY_GENERAL, "spawnSkeletons", false, skeletonComment).getBoolean(false);
-		spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
-		spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(true);
-		spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
-		spawnWitches = config.get(Configuration.CATEGORY_GENERAL, "spawnWitches", true, witchComment).getBoolean(true);
-		doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
-		sickness = config.get(Configuration.CATEGORY_GENERAL, "sickness", false, sicknessComment).getBoolean(false);
-		minSpawn = config.get(Configuration.CATEGORY_GENERAL, "minSpawn", 1, minSpawnComment).getInt();
-		maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "maxSpawn", 5, maxSpawnComment).getInt();
-
-		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
-
+			config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, generalComments);
+			zombieSpawnProb = config.get(Configuration.CATEGORY_GENERAL, "zombieSpawnProb", 5, spawnProbComment).getInt();
+			zombieSpawns = config.get(Configuration.CATEGORY_GENERAL, "zombieSpawns", false, zombieComment).getBoolean(false);
+			spawnCreepers = config.get(Configuration.CATEGORY_GENERAL, "spawnCreepers", false, creeperComment).getBoolean(false);
+			spawnSkeletons = config.get(Configuration.CATEGORY_GENERAL, "spawnSkeletons", false, skeletonComment).getBoolean(false);
+			spawnEnderman = config.get(Configuration.CATEGORY_GENERAL, "spawnEnderman", false, endermanComment).getBoolean(false);
+			spawnSpiders = config.get(Configuration.CATEGORY_GENERAL, "spawnSpiders", true, spiderComment).getBoolean(true);
+			spawnSlime = config.get(Configuration.CATEGORY_GENERAL, "spawnSlime", false, slimeComment).getBoolean(false);
+			spawnWitches = config.get(Configuration.CATEGORY_GENERAL, "spawnWitches", true, witchComment).getBoolean(true);
+			doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
+			sickness = config.get(Configuration.CATEGORY_GENERAL, "sickness", false, sicknessComment).getBoolean(false);
+			minSpawn = config.get(Configuration.CATEGORY_GENERAL, "minSpawn", 1, minSpawnComment).getInt();
+			maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "maxSpawn", 5, maxSpawnComment).getInt();
 		} catch (Exception e) {
 			CrackedZombie.proxy.info("failed to load or read the config file");
 		} finally {

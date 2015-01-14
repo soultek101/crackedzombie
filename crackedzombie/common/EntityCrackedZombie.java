@@ -234,7 +234,7 @@ public class EntityCrackedZombie extends EntityMob {
 					strength = 15;
 				}
 
-				if (strength > 0) {
+				if (ConfigHandler.getSickness()) {
 					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(Potion.poison.id, strength * 20, 0));
 				}
 			}
@@ -282,10 +282,6 @@ public class EntityCrackedZombie extends EntityMob {
 	@Override
 	public boolean getCanSpawnHere()
 	{
-//		int x = MathHelper.floor_double(posX);
-//		int y = MathHelper.floor_double(getEntityBoundingBox().minY);
-//		int z = MathHelper.floor_double(posZ);
-
 		boolean notColliding = worldObj.getCollidingBoundingBoxes(this, getEntityBoundingBox()).isEmpty();
 		boolean isLiquid = worldObj.isAnyLiquid(getEntityBoundingBox());
 		// spawns on grass, sand, dirt, clay and very occasionally spawn on stone
@@ -328,12 +324,6 @@ public class EntityCrackedZombie extends EntityMob {
 		return !isConverting();
 	}
 
-//	@Override
-//	protected boolean isAIEnabled()
-//	{
-//		return true;
-//	}
-	
 	@Override
 	public boolean isChild()
 	{

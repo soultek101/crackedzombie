@@ -384,7 +384,7 @@ public class EntityCrackedZombie extends EntityMob {
 		int strength = 4;
 
 		if (itemstack != null) {
-			strength += 2; // would be nice to add the held item's damage capability 
+			strength += 2; // would be nice to add the held item's damage capability
 		}
 
 		return strength;
@@ -487,7 +487,7 @@ public class EntityCrackedZombie extends EntityMob {
 		super.setEquipmentBasedOnDifficulty(difficulty);
 
 		if (this.rand.nextFloat() < (this.worldObj.getDifficulty() == EnumDifficulty.HARD ? 0.05F : 0.01F)) {
-			switch (rand.nextInt(6)) {
+			switch (rand.nextInt(4)) {
 				case 0:
 					setCurrentItemOrArmor(0, new ItemStack(Items.diamond_sword));
 					break;

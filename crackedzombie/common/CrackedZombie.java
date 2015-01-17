@@ -43,6 +43,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.DungeonHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -81,6 +82,9 @@ public class CrackedZombie {
 	public void Init(FMLInitializationEvent evt)
 	{
 		FMLCommonHandler.instance().bus().register(CrackedZombie.instance);
+		if (ConfigHandler.getStartWithSword()) {
+			MinecraftForge.EVENT_BUS.register(new PlayerJoinedWorldEventHandler());
+		}
 		
 		proxy.registerRenderers();
 		// zombies should spawn in dungeon spawners

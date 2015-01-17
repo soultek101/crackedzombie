@@ -36,6 +36,7 @@ public class ConfigHandler {
 	private static boolean randomSkins;
 	private static boolean doorBusting;
 	private static boolean sickness;
+	private static boolean startWithSword;
 	private static int minSpawn;
 	private static int maxSpawn;
 	
@@ -43,7 +44,7 @@ public class ConfigHandler {
 				+ "For Minecraft Version " + CrackedZombie.mcversion + "\n";
 	static final String spawnProbComment = "zombieSpawnProb adjust to probability of zombies spawning\n"
 			+ "The higher the number the more likely zombies will spawn.";
-	static final String zombieComment = "zombieSpawns allows/disallows vanilla zombies spawns, default is false\n,"
+	static final String zombieComment = "zombieSpawns allows/disallows vanilla zombies spawns, default is false,\n"
 			+ " no vanilla minecraft zombies will spawn. Only the " + CrackedZombie.zombieName + "s will spawn.\n"
 			+ " If set to true, fewer " + CrackedZombie.zombieName + "s will spawn.";
 	static final String creeperComment = "creeperSpawns, set to false to disable creeper spawning, set to true"
@@ -63,6 +64,7 @@ public class ConfigHandler {
 	static final String sicknessComment = "Sickness, set to true to have contact with zombies poison the player.";
 	static final String minSpawnComment = "minSpawn, minimum number of crackedzombies per spawn event";
 	static final String maxSpawnComment = "maxSpawn, maximum number of crackedzombies per spawn event";
+	static final String startWithSwordComment = "Allows the player to spawn with a random type sword, handy in the apocalypse!";
 
 	public static void startConfig(FMLPreInitializationEvent event)
 	{
@@ -85,6 +87,7 @@ public class ConfigHandler {
 			spawnWitches = config.get(Configuration.CATEGORY_GENERAL, "spawnWitches", true, witchComment).getBoolean(true);
 			doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
 			sickness = config.get(Configuration.CATEGORY_GENERAL, "sickness", false, sicknessComment).getBoolean(false);
+			startWithSword = config.get(Configuration.CATEGORY_GENERAL, "startWithSword", false, startWithSwordComment).getBoolean(false);
 			minSpawn = config.get(Configuration.CATEGORY_GENERAL, "minSpawn", 1, minSpawnComment).getInt();
 			maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "maxSpawn", 5, maxSpawnComment).getInt();
 		} catch (Exception e) {
@@ -159,5 +162,10 @@ public class ConfigHandler {
 	public static boolean getSickness()
 	{
 		return sickness;
+	}
+	
+	public static boolean getStartWithSword()
+	{
+		return startWithSword;
 	}
 }

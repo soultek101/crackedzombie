@@ -37,6 +37,7 @@ public class ConfigHandler {
 	private static boolean doorBusting;
 	private static boolean sickness;
 	private static boolean startWithSword;
+	private static boolean enchantSword;
 	private static int minSpawn;
 	private static int maxSpawn;
 	
@@ -65,6 +66,7 @@ public class ConfigHandler {
 	static final String minSpawnComment = "minSpawn, minimum number of crackedzombies per spawn event";
 	static final String maxSpawnComment = "maxSpawn, maximum number of crackedzombies per spawn event";
 	static final String startWithSwordComment = "Allows the player to spawn with a random type sword, handy in the apocalypse!";
+	static final String enchantSwordComment = "set true to enchant the sword given to the player";
 
 	public static void startConfig(FMLPreInitializationEvent event)
 	{
@@ -88,6 +90,7 @@ public class ConfigHandler {
 			doorBusting = config.get(Configuration.CATEGORY_GENERAL, "doorBusting", false, doorBustingComment).getBoolean(false);
 			sickness = config.get(Configuration.CATEGORY_GENERAL, "sickness", false, sicknessComment).getBoolean(false);
 			startWithSword = config.get(Configuration.CATEGORY_GENERAL, "startWithSword", false, startWithSwordComment).getBoolean(false);
+			enchantSword = config.get(Configuration.CATEGORY_GENERAL, "enchantSword", false, enchantSwordComment).getBoolean(false);
 			minSpawn = config.get(Configuration.CATEGORY_GENERAL, "minSpawn", 1, minSpawnComment).getInt();
 			maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "maxSpawn", 5, maxSpawnComment).getInt();
 		} catch (Exception e) {
@@ -167,5 +170,10 @@ public class ConfigHandler {
 	public static boolean getStartWithSword()
 	{
 		return startWithSword;
+	}
+	
+	public static boolean getEnchantSword()
+	{
+		return enchantSword;
 	}
 }

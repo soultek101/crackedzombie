@@ -20,6 +20,7 @@
 package com.crackedzombie.common;
 
 import java.util.Random;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
@@ -43,7 +44,13 @@ public class PlayerJoinedWorldEventHandler {
 		if (event.entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer)event.entity;
 			if (!inventoryContainsSword(player.inventory)) {
-				player.setCurrentItemOrArmor(0, new ItemStack(chooseRandomSwordType()));
+				ItemStack itemstack = new ItemStack(chooseRandomSwordType());
+				if (ConfigHandler.getEnchantSword()) { // you must like this player!
+					itemstack.addEnchantment(Enchantment.unbreaking, 3);
+					itemstack.addEnchantment(Enchantment.knockback, 2);
+					itemstack.addEnchantment(Enchantment.flame, 2);
+				}
+				player.setCurrentItemOrArmor(0, itemstack);
 			}
 		}
 	}
